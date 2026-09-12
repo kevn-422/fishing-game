@@ -123,6 +123,9 @@ input,select{
 .r18{color:#8fffff;text-shadow:0 0 14px #8fffff}
 .r19{color:#ffd700;text-shadow:0 0 16px #ffd700}
 .r20{color:#ffffff;text-shadow:0 0 18px #fff,0 0 30px #fff}
+.treasure-card{background:#1b2038;border:1px solid #6b5a9a;border-radius:12px;padding:14px}
+.treasure-icon{font-size:42px}
+.treasure-locked{opacity:.55;filter:grayscale(1)}
 
 table{
     width:100%;
@@ -181,7 +184,7 @@ th,td{
 <div id="authPage" class="container auth">
     <div class="card">
         <h1 class="center">🎣 낚시왕</h1>
-        <p class="center small">1000종의 물고기를 잡고 최고의 낚시왕이 되어보세요!</p>
+        <p class="center small">1000종의 물고기를 잡고 숨겨진 보물까지 찾아 최고의 낚시왕이 되어보세요!</p>
 
         <input id="loginId" placeholder="아이디">
         <input id="loginPw" type="password" placeholder="비밀번호">
@@ -219,6 +222,7 @@ th,td{
             <button onclick="showPage('transfer')">💸 송금</button>
             <button onclick="showPage('fishdex')">🐟 물고기 도감</button>
             <button onclick="showPage('itemdex')">💎 아이템 도감</button>
+            <button onclick="showPage('treasureDex')">🏴‍☠️ 보물 도감</button>
             <button onclick="showPage('inventory')">🎒 인벤토리</button>
             <button onclick="showPage('equipment')">🛡️ 장비</button>
             <button onclick="showPage('shop')">🏪 상점</button>
@@ -422,6 +426,15 @@ th,td{
 
     </section>
 
+    <!-- 보물 도감 -->
+    <section id="treasureDex" class="page hidden">
+        <div class="card">
+            <h2>🏴‍☠️ 보물 도감</h2>
+            <p id="treasureDexCount"></p>
+            <div id="treasureDexGrid" class="grid"></div>
+        </div>
+    </section>
+
     <!-- 인벤토리 -->
     <section id="inventory" class="page hidden">
 
@@ -438,6 +451,12 @@ th,td{
         <div class="card">
             <h2>💎 아이템 인벤토리</h2>
             <div id="itemInventory" class="grid"></div>
+        </div>
+
+        <div class="card">
+            <h2>🏴‍☠️ 보물 인벤토리</h2>
+            <button class="success" onclick="sellAllTreasures()">💰 보물 전부 판매</button>
+            <div id="treasureInventory" class="grid"></div>
         </div>
 
     </section>
@@ -3054,6 +3073,60 @@ const baits=[{
 
 
 /* ==============================
+   🏴‍☠️ 보물
+============================== */
+
+const treasures=[
+    {id:"t1",name:"낡은 보물상자",tier:5,price:5000,exp:50,icon:"📦"},
+    {id:"t2",name:"해적의 동전",tier:5,price:8000,exp:60,icon:"🪙"},
+    {id:"t3",name:"빛나는 진주",tier:6,price:15000,exp:80,icon:"🫧"},
+    {id:"t4",name:"산호 왕관",tier:6,price:25000,exp:100,icon:"👑"},
+    {id:"t5",name:"황금 나침반",tier:7,price:50000,exp:150,icon:"🧭"},
+    {id:"t6",name:"해적 선장의 반지",tier:7,price:80000,exp:180,icon:"💍"},
+    {id:"t7",name:"심해의 보석",tier:8,price:150000,exp:250,icon:"💎"},
+    {id:"t8",name:"잃어버린 왕국의 열쇠",tier:8,price:250000,exp:300,icon:"🗝️"},
+    {id:"t9",name:"황금 해골",tier:9,price:500000,exp:450,icon:"💀"},
+    {id:"t10",name:"용의 진주",tier:9,price:800000,exp:550,icon:"🔮"},
+    {id:"t11",name:"천상의 왕관",tier:10,price:1500000,exp:800,icon:"👑"},
+    {id:"t12",name:"시간의 모래시계",tier:10,price:2500000,exp:1000,icon:"⌛"},
+    {id:"t13",name:"별빛 보물상자",tier:11,price:5000000,exp:1500,icon:"🌟"},
+    {id:"t14",name:"은하의 보석",tier:11,price:8000000,exp:1800,icon:"💠"},
+    {id:"t15",name:"차원의 열쇠",tier:12,price:15000000,exp:2500,icon:"🔑"},
+    {id:"t16",name:"우주의 왕관",tier:12,price:25000000,exp:3000,icon:"👑"},
+    {id:"t17",name:"미지의 유물",tier:13,price:50000000,exp:5000,icon:"🗿"},
+    {id:"t18",name:"고대 신의 보석",tier:13,price:100000000,exp:8000,icon:"💎"},
+    {id:"t19",name:"블랙홀의 핵",tier:14,price:250000000,exp:12000,icon:"🌑"},
+    {id:"t20",name:"시간을 초월한 보물",tier:15,price:500000000,exp:20000,icon:"⏳"},
+    {id:"t21",name:"창조주의 황금상자",tier:16,price:1000000000,exp:35000,icon:"🧰"},
+    {id:"t22",name:"무한의 보석",tier:17,price:5000000000,exp:60000,icon:"💠"},
+    {id:"t23",name:"세계수의 황금열매",tier:18,price:20000000000,exp:100000,icon:"🌳"},
+    {id:"t24",name:"차원신의 왕관",tier:19,price:100000000000,exp:200000,icon:"👑"},
+    {id:"t25",name:"절대자의 보물",tier:20,price:1000000000000,exp:500000,icon:"🌌"}
+];
+
+function ensureTreasureData(user){
+    if(!user.treasureInventory) user.treasureInventory={};
+    if(!user.treasureDiscovered) user.treasureDiscovered=[];
+}
+
+function getTreasureChance(){
+    const stats=getTotalStats();
+    return Math.min(8,3+(stats.item||0)/100);
+}
+
+function getRandomTreasure(){
+    // 높은 등급일수록 훨씬 희귀
+    const weights=treasures.map(t=>Math.pow(0.58,t.tier-5));
+    const total=weights.reduce((a,b)=>a+b,0);
+    let r=Math.random()*total;
+    for(let i=0;i<treasures.length;i++){
+        r-=weights[i];
+        if(r<=0) return treasures[i];
+    }
+    return treasures[0];
+}
+
+/* ==============================
    기본 유저
 ============================== */
 
@@ -3076,6 +3149,8 @@ function defaultUser(nickname){
         fishDiscovered:[],
 
         itemDiscovered:[],
+        treasureInventory:{},
+        treasureDiscovered:[],
 
         ownedRods:["wood"],
 
@@ -3245,6 +3320,9 @@ function login(){
     currentUser=
         accounts[id].game||
         defaultUser(accounts[id].nickname);
+
+    ensureTreasureData(currentUser);
+    saveGame();
 
     localStorage.setItem(
         LOGIN_KEY,
@@ -3671,10 +3749,25 @@ function fishOnce(){
 
     }
 
+    let treasureDrop=null;
+    if(Math.random()*100 < getTreasureChance()){
+        treasureDrop=getRandomTreasure();
+
+        currentUser.treasureInventory[treasureDrop.id]=
+            (currentUser.treasureInventory[treasureDrop.id]||0)+1;
+
+        if(!currentUser.treasureDiscovered.includes(treasureDrop.id)){
+            currentUser.treasureDiscovered.push(treasureDrop.id);
+        }
+
+        addExp(treasureDrop.exp);
+    }
+
     renderFishResult(
         caught,
         exp,
-        itemDrop
+        itemDrop,
+        treasureDrop
     );
 
     saveGame();
@@ -3685,7 +3778,8 @@ function fishOnce(){
 function renderFishResult(
     caught,
     exp,
-    itemDrop
+    itemDrop,
+    treasureDrop=null
 ){
 
     let html=`
@@ -4274,11 +4368,13 @@ function renderAll(){
     if(!currentUser)
         return;
 
+    ensureTreasureData(currentUser);
     renderUserInfo();
     renderHome();
     renderFishing();
     renderFishDex();
     renderItemDex();
+    renderTreasureDex();
     renderInventory();
     renderEquipment();
     renderShop();
@@ -4775,6 +4871,8 @@ function renderInventory(){
     }
 
 
+    renderTreasureInventory();
+
     const itemInv=
         document.getElementById("itemInventory");
 
@@ -4833,6 +4931,119 @@ function renderInventory(){
 
 }
 
+
+/* ==============================
+   🏴‍☠️ 보물 도감 / 인벤토리
+============================== */
+
+function renderTreasureDex(){
+    ensureTreasureData(currentUser);
+
+    document.getElementById("treasureDexCount").textContent=
+        `${currentUser.treasureDiscovered.length} / ${treasures.length} 발견`;
+
+    document.getElementById("treasureDexGrid").innerHTML=
+        treasures.map(t=>{
+            const discovered=currentUser.treasureDiscovered.includes(t.id);
+            return `
+                <div class="treasure-card ${discovered?"":"treasure-locked"}">
+                    <div class="treasure-icon">${discovered?t.icon:"❓"}</div>
+                    <h3 class="rarity r${t.tier}">
+                        ${discovered?t.name:"???"}
+                    </h3>
+                    ${
+                        discovered
+                        ? `<p>🏷️ ${t.tier}등급</p>
+                           <p>💰 ${t.price.toLocaleString()} 코인</p>
+                           <p>📈 +${t.exp.toLocaleString()} EXP</p>`
+                        : `<p class="small">아직 발견하지 못했습니다.</p>`
+                    }
+                </div>
+            `;
+        }).join("");
+}
+
+function sellTreasure(id){
+    ensureTreasureData(currentUser);
+    const treasure=treasures.find(x=>x.id===id);
+    const amount=currentUser.treasureInventory[id]||0;
+
+    if(!treasure || amount<=0){
+        toast("보물이 없습니다.");
+        return;
+    }
+
+    const stats=getTotalStats();
+    const sellMultiplier=1+(stats.sell||0)/100;
+    const total=Math.floor(treasure.price*amount*sellMultiplier);
+
+    currentUser.coins+=total;
+    currentUser.totalCoinsEarned+=total;
+    currentUser.treasureInventory[id]=0;
+
+    saveGame();
+    renderAll();
+    toast(`🏴‍☠️ ${treasure.name} 판매! +${total.toLocaleString()} 코인`);
+}
+
+function sellAllTreasures(){
+    ensureTreasureData(currentUser);
+
+    let total=0;
+    const stats=getTotalStats();
+    const sellMultiplier=1+(stats.sell||0)/100;
+
+    Object.keys(currentUser.treasureInventory).forEach(id=>{
+        const treasure=treasures.find(x=>x.id===id);
+        const amount=currentUser.treasureInventory[id]||0;
+        if(treasure && amount>0){
+            total+=Math.floor(treasure.price*amount*sellMultiplier);
+            currentUser.treasureInventory[id]=0;
+        }
+    });
+
+    if(total<=0){
+        toast("판매할 보물이 없습니다.");
+        return;
+    }
+
+    currentUser.coins+=total;
+    currentUser.totalCoinsEarned+=total;
+
+    saveGame();
+    renderAll();
+    toast(`🏴‍☠️ 보물 전부 판매! +${total.toLocaleString()} 코인`);
+}
+
+function renderTreasureInventory(){
+    ensureTreasureData(currentUser);
+
+    const el=document.getElementById("treasureInventory");
+    const ids=Object.keys(currentUser.treasureInventory)
+        .filter(id=>currentUser.treasureInventory[id]>0);
+
+    if(ids.length===0){
+        el.innerHTML="<p>보물이 없습니다.</p>";
+        return;
+    }
+
+    el.innerHTML=ids.map(id=>{
+        const t=treasures.find(x=>x.id===id);
+        const amount=currentUser.treasureInventory[id];
+        if(!t) return "";
+
+        return `
+            <div class="treasure-card">
+                <div class="treasure-icon">${t.icon}</div>
+                <h3 class="rarity r${t.tier}">${t.name}</h3>
+                <p>🏷️ ${t.tier}등급</p>
+                <p>💰 ${t.price.toLocaleString()} 코인</p>
+                <p>x${amount}</p>
+                <button class="success" onclick="sellTreasure('${t.id}')">판매</button>
+            </div>
+        `;
+    }).join("");
+}
 
 /* ==============================
    장비 UI
@@ -6333,42 +6544,6 @@ setInterval(
 autoLogin();
 
 
-
-// ==============================
-// 전체 코드 복사
-// ==============================
-async function copyFullCode(){
-    const button=document.querySelector('.copy-code-btn');
-    const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
-    try{
-        await navigator.clipboard.writeText(html);
-        if(button){
-            const old=button.textContent;
-            button.textContent='✅ 복사 완료!';
-            setTimeout(()=>button.textContent=old,1500);
-        }
-        if(typeof toast==='function') toast('📋 전체 HTML 코드가 복사되었습니다!');
-    }catch(e){
-        const ta=document.createElement('textarea');
-        ta.value=html;
-        ta.style.position='fixed';
-        ta.style.opacity='0';
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        try{
-            document.execCommand('copy');
-            if(button){
-                const old=button.textContent;
-                button.textContent='✅ 복사 완료!';
-                setTimeout(()=>button.textContent=old,1500);
-            }
-        }catch(err){
-            alert('복사에 실패했습니다. 브라우저의 복사 권한을 확인해주세요.');
-        }
-        ta.remove();
-    }
-}
 </script>
 
 </body>
