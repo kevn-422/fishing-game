@@ -328,8 +328,7 @@ line-height:1.45;"></textarea>
 <button onclick="showPage('inventory')">🎒 인벤토리</button>
 <button onclick="showPage('equipment')">🛡️ 장비</button>
 <button onclick="showPage('shop')">🏪 상점</button>
-<button onclick="showPage('chanceGamePage')">🎲 행운 게임</button>
-<button onclick="showPage('specialGachaPage')">🎁 특별 아이템 뽑기</button>
+<button onclick="showPage('specialGachaPage')">📦 고급 보물상자</button>
 <button id="adminNavButton" class="danger hidden" onclick="showPage('admin')">👑 관리자</button>
 <button class="danger" onclick="logout()">로그아웃</button>
 </div>
@@ -442,28 +441,6 @@ line-height:1.45;"></textarea>
 
 <!-- 낚시 -->
 <section id="fishing" class="page">
-
-<div class="owner-coin-multiplier">
-  <h3>👑 소유자 전용 코인 배수</h3>
-  <p class="small">소유자만 코인 획득량을 2배~100배로 설정할 수 있습니다.</p>
-  <div class="button-row">
-    <button onclick="setOwnerCoinMultiplier(2)">💰 2배</button>
-    <button onclick="setOwnerCoinMultiplier(4)">💰 4배</button>
-    <button onclick="setOwnerCoinMultiplier(8)">💰 8배</button>
-    <button onclick="setOwnerCoinMultiplier(12)">💰 12배</button>
-    <button onclick="setOwnerCoinMultiplier(16)">💰 16배</button>
-    <button onclick="setOwnerCoinMultiplier(20)">💰 20배</button>
-    <button onclick="setOwnerCoinMultiplier(30)">💰 30배</button>
-    <button onclick="setOwnerCoinMultiplier(40)">💰 40배</button>
-    <button onclick="setOwnerCoinMultiplier(50)">💰 50배</button>
-    <button onclick="setOwnerCoinMultiplier(75)">💰 75배</button>
-    <button onclick="setOwnerCoinMultiplier(100)">💰 100배</button>
-    <button onclick="setOwnerCoinMultiplier(1)">❌ 해제</button>
-  </div>
-  <div id="ownerCoinMultiplierStatus" class="small">현재 코인 배수: 1배</div>
-</div>
-
-
 
 <div class="card">
 <h2>🎣 낚시</h2>
@@ -11383,34 +11360,8 @@ x1
 </section>
 
 
-<!-- 🎁 특별 아이템 뽑기 -->
+<!-- 📦 고급 보물상자 -->
 <section id="specialGachaPage" class="page hidden">
-<div class="card">
-<h2>🎁 특별 아이템 뽑기</h2>
-<p class="small">낚시로는 나오지 않는 특별 아이템 20종을 뽑을 수 있습니다. 높은 등급일수록 확률이 낮습니다.</p>
-
-<div id="specialGachaResult" class="fish-result" style="min-height:150px;">
-<div class="big">🎁</div>
-<p>뽑기 버튼을 눌러보세요!</p>
-</div>
-
-<div class="grid">
-<div class="stat center"><b>🎁 1회 뽑기</b><br>💰 1,000,000 코인</div>
-<div class="stat center"><b>🎁 10회 뽑기</b><br>💰 9,000,000 코인</div>
-</div>
-
-<div class="grid" style="margin-top:12px;">
-<div class="stat center">10~12등급<br><b>50%</b></div>
-<div class="stat center">13~15등급<br><b>30%</b></div>
-<div class="stat center">16~17등급<br><b>12%</b></div>
-<div class="stat center">18등급<br><b>5%</b></div>
-<div class="stat center">19등급<br><b>2.5%</b></div>
-<div class="stat center">20등급<br><b>0.5%</b></div>
-</div>
-
-<button class="primary" style="width:100%;margin-top:12px;" onclick="specialGacha(1)">🎁 1회 뽑기</button>
-<button class="warning" style="width:100%;" onclick="specialGacha(10)">🎁 10회 뽑기</button>
-<div id="specialGachaHistory" class="small" style="margin-top:12px;"></div>
 <div class="card" style="margin-top:15px;">
 <h3>📦 고급 보물상자</h3>
 <div id="specialBoxCooldown" class="small" style="margin:8px 0;font-weight:700">✅ 뽑기 가능</div>
@@ -11425,89 +11376,7 @@ x1
 <div id="specialBoxResult" class="small" style="margin-top:12px;"></div>
 <div class="small" style="margin-top:12px;">※ 입력하신 확률 합계가 100%가 아닌 상자는 전체 합계를 기준으로 자동 정규화하여 적용합니다.</div>
 </div></div>
-
-</div>
 </section>
-
-<!-- 🎲 무료 행운 게임 -->
-<section id="chanceGamePage" class="page hidden">
-
-<div class="card">
-<h2>🎲 무료 행운 게임</h2>
-
-<p class="small">
-코인을 사용하지 않는 무료 미니게임입니다.<br>
-결과에 따라 실제 게임 경험치(EXP)를 획득합니다.
-</p>
-
-<div id="chanceResult" style="
-text-align:center;
-font-size:30px;
-font-weight:bold;
-padding:25px 10px;
-margin:15px 0;
-background:#16263d;
-border-radius:15px;">🟠 20배</div>
-
-<div class="grid">
-
-<div class="stat center">
-🟢 1.5배<br>
-<b>45%</b>
-</div>
-
-<div class="stat center">
-🔵 6배<br>
-<b>25%</b>
-</div>
-
-<div class="stat center">
-🟣 12배<br>
-<b>15%</b>
-</div>
-
-<div class="stat center">
-🟠 20배<br>
-<b>8%</b>
-</div>
-
-<div class="stat center">
-🔴 28배<br>
-<b>4%</b>
-</div>
-
-<div class="stat center">
-🟡 40배<br>
-<b>2%</b>
-</div>
-
-<div class="stat center">
-💎 70배<br>
-<b>0.9%</b>
-</div>
-
-<div class="stat center">
-👑 100배<br>
-<b>0.1%</b>
-</div>
-
-</div>
-
-<p class="center">
-📈 이번 결과 EXP:
-<b id="chanceExpGain">0</b>
-</p>
-
-<p class="center">
-⭐ 현재 EXP:
-<b id="chanceCurrentExp">0</b>
-</p>
-
-<button id="chanceButton" class="primary" style="width:100%;" onclick="playChanceGame()" disabled="">🎲 결과 계산 중...</button>
-</div>
-
-</section>
-
 
 <script>
 
@@ -12942,39 +12811,32 @@ return stats;
 
 }
 
-const OWNER_NICKNAME="건";
-let ownerCoinMultiplier=1;
 
-function isOwner(){
-  return !!currentUser && currentUser.nickname===OWNER_NICKNAME;
+// ================================
+// 🎣 낚시 보상 지급
+// ================================
+function giveFishingReward(fish) {
+    if (!currentUser || !fish) return 0;
+
+    const price = Number(fish.price);
+
+    if (!Number.isFinite(price) || price <= 0) {
+        return 0;
+    }
+
+    // 🎣 낚시 코인도 5배
+    const reward = addCoins(price);
+
+    console.log(
+        `🎣 ${fish.name || "물고기"} 획득! 기본 ${price} → 실제 지급 ${reward}`
+    );
+
+    return reward;
 }
 
-function setOwnerCoinMultiplier(multiplier){
-  if(!currentUser) return;
-  const ownerNames = ["Kevinb_703"];
-  if(!ownerNames.includes(currentUser.name)){
-    toast("👑 소유자만 사용할 수 있습니다.");
-    return;
-  }
-  multiplier = Number(multiplier);
-  const allowed = [1,2,4,8,12,16,20,30,40,50,75,100];
-  if(!allowed.includes(multiplier)) return;
-  ownerCoinMultiplier = multiplier;
-  const el = document.getElementById("ownerCoinMultiplierStatus");
-  if(el) el.textContent = `현재 코인 배수: ${multiplier}배`;
-  saveGame();
-  renderAll();
-  toast(`💰 코인 배수 ${multiplier}배 적용!`);
-}
 
-function addCoins(amount){
-  if(!currentUser || !Number.isFinite(amount)) return 0;
-  const mult=isOwner()?ownerCoinMultiplier:1;
-  const gained=Math.floor(amount*mult);
-  currentUser.coins+=gained;
-  currentUser.totalCoinsEarned=(currentUser.totalCoinsEarned||0)+gained;
-  return gained;
-}
+
+
 
 function renderOwnerCoinMultiplier(){
   const box=document.getElementById("ownerCoinMultiplierBox");
@@ -16176,136 +16038,6 @@ el.style.display="none";
 
 
 /* ==============================
-🎲 무료 행운 게임
-실제 addExp() 시스템과 연결
-============================== */
-
-let chanceGamePlaying=false;
-
-function playChanceGame(){
-
-if(!currentUser || chanceGamePlaying)
-return;
-
-chanceGamePlaying=true;
-
-const button=document.getElementById("chanceButton");
-const result=document.getElementById("chanceResult");
-
-if(button){
-button.disabled=true;
-button.textContent="🎲 결과 계산 중...";
-}
-
-if(result)
-result.textContent="🎲 ...";
-
-const animation=setInterval(()=>{
-
-const preview=[
-"🟢 1.5배",
-"🔵 6배",
-"🟣 12배",
-"🟠 20배",
-"🔴 28배",
-"🟡 40배",
-"💎 70배",
-"👑 100배"
-];
-
-if(result){
-result.textContent=
-preview[
-Math.floor(
-Math.random()*preview.length
-)
-];
-}
-
-},100);
-
-setTimeout(()=>{
-
-clearInterval(animation);
-
-const random=Math.random()*100;
-
-let multiplier;
-
-if(random<45){
-multiplier=1.5;
-}else if(random<70){
-multiplier=6;
-}else if(random<85){
-multiplier=12;
-}else if(random<93){
-multiplier=20;
-}else if(random<97){
-multiplier=28;
-}else if(random<99){
-multiplier=40;
-}else if(random<99.9){
-multiplier=70;
-}else{
-multiplier=100;
-}
-
-/*
-* 배율은 EXP 계산에만 사용합니다.
-* 코인은 차감/지급하지 않습니다.
-*/
-const expGain=Math.floor(multiplier*10);
-
-// ★ 네 게임의 실제 EXP 시스템 사용
-addExp(expGain);
-
-// 저장 + 홈 EXP 바/레벨 즉시 갱신
-saveGame();
-renderAll();
-
-if(result)
-result.textContent=
-"🎉 "+multiplier+"배 결과!";
-
-const gainEl=
-document.getElementById("chanceExpGain");
-
-const currentExpEl=
-document.getElementById("chanceCurrentExp");
-
-if(gainEl)
-gainEl.textContent=
-expGain.toLocaleString();
-
-if(currentExpEl)
-currentExpEl.textContent=
-Math.floor(currentUser.exp).toLocaleString();
-
-if(multiplier>=70){
-toast(
-"👑 대박! "+multiplier+
-"배 → +"+expGain+" EXP"
-);
-}else{
-toast(
-"🎉 "+multiplier+
-"배 → +"+expGain+" EXP"
-);
-}
-
-if(button){
-button.disabled=false;
-button.textContent="🎲 무료 게임 시작";
-}
-
-chanceGamePlaying=false;
-
-},1800);
-
-}
-
-
-/* ==============================
 자동 로그인
 ============================== */
 
@@ -16355,67 +16087,5 @@ renderLevelSteal();
 autoLogin();
 
 </script>
-
-
-
-<script>
-function getFullHTMLSource(){
-return "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-}
-
-function copyAllSource(){
-const source=getFullHTMLSource();
-const btn=document.getElementById("copyAllSourceBtn");
-
-function success(){
-if(btn){
-const old=btn.textContent;
-btn.textContent="✅ 전체 코드 복사 완료!";
-setTimeout(()=>btn.textContent=old,1800);
-}
-}
-
-if(navigator.clipboard && window.isSecureContext){
-navigator.clipboard.writeText(source).then(success).catch(()=>{
-fallbackCopySource(source,success);
-});
-}else{
-fallbackCopySource(source,success);
-}
-}
-
-function fallbackCopySource(source,done){
-const box=document.createElement("textarea");
-box.value=source;
-box.style.position="fixed";
-box.style.left="-9999px";
-document.body.appendChild(box);
-box.focus();
-box.select();
-
-try{
-document.execCommand("copy");
-done();
-}catch(e){
-alert("자동 복사에 실패했습니다. 코드 보기에서 전체 코드를 직접 복사해주세요.");
-}
-
-box.remove();
-}
-
-function toggleSourceViewer(){
-const viewer=document.getElementById("sourceViewer");
-const box=document.getElementById("sourceCodeBox");
-
-if(viewer.style.display==="none"){
-box.value=getFullHTMLSource();
-viewer.style.display="block";
-}else{
-viewer.style.display="none";
-}
-}
-</script>
-
-
 
 </body></html>
