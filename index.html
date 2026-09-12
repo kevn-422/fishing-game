@@ -328,7 +328,6 @@ line-height:1.45;"></textarea>
 <button onclick="showPage('inventory')">🎒 인벤토리</button>
 <button onclick="showPage('equipment')">🛡️ 장비</button>
 <button onclick="showPage('shop')">🏪 상점</button>
-<button onclick="showPage('ranking')">🏆 랭킹</button>
 <button onclick="showPage('chanceGamePage')">🎲 행운 게임</button>
 <button id="adminNavButton" class="danger hidden" onclick="showPage('admin')">👑 관리자</button>
 <button class="danger" onclick="logout()">로그아웃</button>
@@ -11278,6 +11277,17 @@ x1
 <label>대상 계정</label>
 <select id="adminTarget"></select>
 
+<div class="item" style="margin:12px 0">
+<b>🛡️ 유저 제재</b>
+<p class="small">킥은 세션 종료, 밴은 해당 계정의 로그인을 차단합니다.</p>
+<input id="adminBanReason" placeholder="밴 사유 (선택)">
+<br>
+<button class="warning" onclick="adminKickUser()">👢 킥</button>
+<button class="danger" onclick="adminBanUser()">🔨 밴</button>
+<button class="success" onclick="adminUnbanUser()">🔓 밴 해제</button>
+<button class="danger" onclick="adminDeleteAccount()">🗑️ 계정 삭제</button>
+</div>
+
 <div class="grid">
 <div class="item">
 <b>💰 코인 지급/차감</b>
@@ -11336,6 +11346,11 @@ x1
 <h3>📢 관리자 공지</h3>
 <input id="adminNotice" placeholder="공지 내용을 입력하세요">
 <button class="primary" onclick="adminNoticeSend()">공지 표시</button>
+</div>
+
+<div class="card">
+<h3>🚫 밴 목록</h3>
+<div id="adminBanList"></div>
 </div>
 
 <div class="card">
@@ -11424,51 +11439,6 @@ border-radius:15px;">🟠 20배</div>
 
 </section>
 
-<!-- 랭킹 -->
-<section id="ranking" class="page hidden">
-
-<div class="card">
-<h2>🏆 전체 랭킹</h2>
-<div id="rankingTable">
-
-<table>
-
-<tbody><tr>
-<th>순위</th>
-<th>닉네임</th>
-<th>레벨</th>
-<th>대결 승리</th>
-<th>코인</th>
-</tr>
-
-
-
-<tr>
-
-<td>1</td>
-
-<td>ㅇㄵㄹㅇㅇ</td>
-
-<td>Lv.1</td>
-
-<td>0</td>
-
-<td>
-500
-</td>
-
-</tr>
-
-
-
-</tbody></table>
-
-</div>
-</div>
-
-</section>
-
-</div>
 
 <script>
 
@@ -11480,6 +11450,7 @@ const ACCOUNT_KEY="fishingKing_accounts";
 const LOGIN_KEY="fishingKing_currentAccount";
 const RANDOM_SHOP_KEY="fishingKing_randomShop";
 const RANDOM_SHOP_REFRESH=30*60*1000;
+const BAN_KEY="fishingKing_bans";
 
 // 🕵️ 레벨 훔치기 설정
 const LEVEL_STEAL_COST=10000;
@@ -12539,6 +12510,17 @@ return;
 
 }
 
+if(isBanned(id)){
+const ban=getBanInfo(id);
+toast("🚫 밴된 계정입니다. 사유: "+(ban?.reason||"관리자 조치"));
+return;
+}
+
+if(accounts[id].kickAt){
+delete accounts[id].kickAt;
+saveAccounts(accounts);
+}
+
 currentAccountId=id;
 
 currentUser=ensureUserData(
@@ -12578,6 +12560,21 @@ document.getElementById("authPage")
 }
 
 function openGame(){
+
+if(currentAccountId && isBanned(currentAccountId)){
+toast("🚫 밴된 계정입니다.");
+logout();
+return;
+}
+
+const accounts=getAccounts();
+if(currentAccountId && accounts[currentAccountId]?.kickAt){
+delete accounts[currentAccountId].kickAt;
+saveAccounts(accounts);
+toast("👢 킥 처리되어 로그아웃되었습니다.");
+logout();
+return;
+}
 
 document.getElementById("authPage")
 .classList.add("hidden");
@@ -12824,8 +12821,8 @@ getTotalStats().rare;
 */
 
 const tierBaseWeights=[
-52,24,10,5.5,3,1.8,1,0.45,0.2,0.08,
-0.04,0.015,0.005,0.0025,0.0012,0.00055,0.00025,0.0001,0.00003,0.000005
+30,20,15,10,7,5,3.5,2.5,1.5,1,
+0.7,0.4,0.2,0.1,0.05,0.025,0.015,0.007,0.002,0.001
 ];
 
 const safeLuck=
@@ -13575,7 +13572,6 @@ renderItemDex();
 renderInventory();
 renderEquipment();
 renderShop();
-renderRanking();
 renderBattle();
 renderTransfer();
 renderLevelSteal();
@@ -14810,6 +14806,125 @@ renderRandomShop();
 ============================== */
 
 /* ==============================
+🚫 밴 / 킥 시스템
+- 밴: 해당 계정의 로그인 차단
+- 킥: 현재 로그인 세션 종료
+- 이 버전은 localStorage 기반 게임이므로 같은 브라우저/저장소에서 적용됩니다.
+============================== */
+
+function getBans(){
+try{
+return JSON.parse(localStorage.getItem(BAN_KEY)||"{}");
+}catch(e){
+return {};
+}
+
+}
+
+function saveBans(bans){
+localStorage.setItem(BAN_KEY,JSON.stringify(bans));
+}
+
+function isBanned(id){
+const bans=getBans();
+return !!bans[id];
+}
+
+function getBanInfo(id){
+return getBans()[id]||null;
+}
+
+function adminKickUser(){
+if(!isAdmin()) return toast("관리자만 사용할 수 있습니다.");
+
+const id=document.getElementById("adminTarget")?.value;
+if(!id) return toast("대상 계정을 선택해주세요.");
+if(id===currentAccountId) return toast("자기 자신은 킥할 수 없습니다.");
+
+const accounts=getAccounts();
+if(!accounts[id]) return toast("계정을 찾을 수 없습니다.");
+
+const kickedName=accounts[id].nickname||id;
+
+/*
+같은 브라우저에서 대상 계정의 다음 동작을 막는 대신,
+관리자 게임에서는 대상이 온라인 상태인지 알 수 없으므로
+현재 브라우저의 대상 계정 로그인 세션을 무효화할 수 있는
+kick timestamp를 저장합니다.
+*/
+accounts[id].kickAt=Date.now();
+saveAccounts(accounts);
+
+toast(`👢 ${kickedName}을(를) 킥 처리했습니다.`);
+renderAll();
+}
+
+function adminBanUser(){
+if(!isAdmin()) return toast("관리자만 사용할 수 있습니다.");
+
+const id=document.getElementById("adminTarget")?.value;
+if(!id) return toast("대상 계정을 선택해주세요.");
+if(id===currentAccountId) return toast("자기 자신은 밴할 수 없습니다.");
+
+const accounts=getAccounts();
+if(!accounts[id]) return toast("계정을 찾을 수 없습니다.");
+
+const reason=(document.getElementById("adminBanReason")?.value||"관리자 조치").trim();
+const bans=getBans();
+
+bans[id]={
+reason:reason||"관리자 조치",
+at:Date.now(),
+by:currentAccountId
+};
+
+saveBans(bans);
+
+toast(`🔨 ${accounts[id].nickname||id} 밴 완료!`);
+renderAll();
+}
+
+function adminUnbanUser(){
+if(!isAdmin()) return toast("관리자만 사용할 수 있습니다.");
+
+const id=document.getElementById("adminTarget")?.value;
+if(!id) return toast("대상 계정을 선택해주세요.");
+
+const bans=getBans();
+if(!bans[id]) return toast("이 계정은 밴되어 있지 않습니다.");
+
+delete bans[id];
+saveBans(bans);
+
+toast("🔓 밴 해제 완료!");
+renderAll();
+}
+
+function adminDeleteAccount(){
+if(!isAdmin()) return toast("관리자만 사용할 수 있습니다.");
+
+const id=document.getElementById("adminTarget")?.value;
+if(!id) return toast("대상 계정을 선택해주세요.");
+if(id===currentAccountId) return toast("자기 자신은 삭제할 수 없습니다.");
+
+const accounts=getAccounts();
+if(!accounts[id]) return toast("계정을 찾을 수 없습니다.");
+
+const name=accounts[id].nickname||id;
+if(!confirm(`정말 ${name} 계정을 삭제할까요?`)) return;
+
+delete accounts[id];
+saveAccounts(accounts);
+
+const bans=getBans();
+delete bans[id];
+saveBans(bans);
+
+toast(`🗑️ ${name} 계정을 삭제했습니다.`);
+renderAll();
+}
+
+/* ==============================
 👑 관리자 시스템
 ============================== */
 
@@ -14917,89 +15032,46 @@ document.getElementById("adminRod").innerHTML=rods.map(x=>`<option value="${x.id
 document.getElementById("adminLocation").innerHTML=locations.map(x=>`<option value="${x.id}">${x.name}</option>`).join("");
 document.getElementById("adminBait").innerHTML=baits.map(x=>`<option value="${x.id}">${x.name}</option>`).join("");
 document.getElementById("adminList").innerHTML=ADMIN_NAMES.map(x=>`👑 <b>${x}</b>`).join("<br>");
-}
 
-function renderRanking(){
+const bannedList=document.getElementById("adminBanList");
+if(bannedList){
+const bans=getBans();
+const entries=Object.entries(bans);
 
-const accounts=
-Object.values(getAccounts());
-
-accounts.sort((a,b)=>{
-
-const ag=
-a.game||
-defaultUser(a.nickname);
-
-const bg=
-b.game||
-defaultUser(b.nickname);
-
-if(bg.level!==ag.level)
-return bg.level-ag.level;
-
-if(bg.battleWins!==ag.battleWins)
-return bg.battleWins-ag.battleWins;
-
-return bg.coins-ag.coins;
-
-});
-
-
-const top=
-accounts.slice(0,50);
-
-
-document.getElementById("rankingTable")
-.innerHTML=`
-
-<table>
-
-<tr>
-<th>순위</th>
-<th>닉네임</th>
-<th>레벨</th>
-<th>대결 승리</th>
-<th>코인</th>
-</tr>
-
-${
-top.map((account,index)=>{
-
-const g=
-account.game||
-defaultUser(
-account.nickname
-);
-
-return`
-
-<tr>
-
-<td>${index+1}</td>
-
-<td>${g.nickname}</td>
-
-<td>Lv.${g.level}</td>
-
-<td>${g.battleWins}</td>
-
-<td>
-${g.coins.toLocaleString()}
-</td>
-
-</tr>
-
-`;
-
+bannedList.innerHTML=entries.length
+?entries.map(([id,b])=>{
+const account=accounts[id];
+const name=account?.nickname||id;
+return `<div class="item" style="margin-top:8px">
+🚫 <b>${name}</b> (${id})<br>
+<span class="small">사유: ${b.reason||"관리자 조치"}</span><br>
+<button class="success" onclick="adminSelectUser('${id}')">선택</button>
+<button class="warning" onclick="adminUnbanById('${id}')">밴 해제</button>
+</div>`;
 }).join("")
+:"<p class="small">밴된 계정이 없습니다.</p>";
+}
 }
 
-</table>
-
-`;
-
+function adminSelectUser(id){
+if(!isAdmin()) return;
+const el=document.getElementById("adminTarget");
+if(el){
+el.value=id;
+el.dispatchEvent(new Event("change"));
+}
+renderAdmin();
 }
 
+function adminUnbanById(id){
+if(!isAdmin()) return;
+const bans=getBans();
+if(!bans[id]) return toast("이미 밴 해제된 계정입니다.");
+delete bans[id];
+saveBans(bans);
+toast("🔓 밴 해제 완료!");
+renderAdmin();
+}
 
 /* ==============================
 대결
