@@ -275,7 +275,7 @@ line-height:1.45;"></textarea>
 <div id="authPage" class="container auth hidden">
 <div class="card">
 <h1 class="center">🎣 낚시왕</h1>
-<p class="center small">2,000종의 물고기와 1,950종의 아이템을 모아 최고의 낚시왕이 되어보세요!</p>
+<p class="center small">2,000종의 물고기와 1,970종의 아이템을 모아 최고의 낚시왕이 되어보세요!</p>
 
 <input id="loginId" placeholder="아이디">
 <input id="loginPw" type="password" placeholder="비밀번호">
@@ -329,6 +329,7 @@ line-height:1.45;"></textarea>
 <button onclick="showPage('equipment')">🛡️ 장비</button>
 <button onclick="showPage('shop')">🏪 상점</button>
 <button onclick="showPage('chanceGamePage')">🎲 행운 게임</button>
+<button onclick="showPage('specialGachaPage')">🎁 특별 아이템 뽑기</button>
 <button id="adminNavButton" class="danger hidden" onclick="showPage('admin')">👑 관리자</button>
 <button class="danger" onclick="logout()">로그아웃</button>
 </div>
@@ -373,7 +374,7 @@ line-height:1.45;"></textarea>
 <div class="stat">
 💎 아이템 도감
 <div class="big">
-0/1950
+0/1970
 </div>
 </div>
 
@@ -5024,7 +5025,7 @@ mqpdg10 · Lv.1
 
 <div class="card">
 <h2>💎 아이템 도감</h2>
-<p id="itemDexCount">0 / 1950 발견</p>
+<p id="itemDexCount">0 / 1970 발견</p>
 
 <div id="itemDexGrid" class="grid">
 
@@ -11360,6 +11361,50 @@ x1
 </section>
 
 
+<!-- 🎁 특별 아이템 뽑기 -->
+<section id="specialGachaPage" class="page hidden">
+<div class="card">
+<h2>🎁 특별 아이템 뽑기</h2>
+<p class="small">낚시로는 나오지 않는 특별 아이템 20종을 뽑을 수 있습니다. 높은 등급일수록 확률이 낮습니다.</p>
+
+<div id="specialGachaResult" class="fish-result" style="min-height:150px;">
+<div class="big">🎁</div>
+<p>뽑기 버튼을 눌러보세요!</p>
+</div>
+
+<div class="grid">
+<div class="stat center"><b>🎁 1회 뽑기</b><br>💰 1,000,000 코인</div>
+<div class="stat center"><b>🎁 10회 뽑기</b><br>💰 9,000,000 코인</div>
+</div>
+
+<div class="grid" style="margin-top:12px;">
+<div class="stat center">10~12등급<br><b>50%</b></div>
+<div class="stat center">13~15등급<br><b>30%</b></div>
+<div class="stat center">16~17등급<br><b>12%</b></div>
+<div class="stat center">18등급<br><b>5%</b></div>
+<div class="stat center">19등급<br><b>2.5%</b></div>
+<div class="stat center">20등급<br><b>0.5%</b></div>
+</div>
+
+<button class="primary" style="width:100%;margin-top:12px;" onclick="specialGacha(1)">🎁 1회 뽑기</button>
+<button class="warning" style="width:100%;" onclick="specialGacha(10)">🎁 10회 뽑기</button>
+<div id="specialGachaHistory" class="small" style="margin-top:12px;"></div>
+<div class="card" style="margin-top:15px;">
+<h3>📦 고급 보물상자</h3>
+<p class="small">가격이 높아질수록 더 높은 등급의 특별 아이템이 나옵니다.</p>
+<div class="grid">
+<button class="primary" onclick="openSpecialBox(1000000000000,10,1)">📦 1조 상자</button>
+<button class="primary" onclick="openSpecialBox(10000000000000,12,1)">💎 10조 상자</button>
+<button class="warning" onclick="openSpecialBox(100000000000000,14,1)">👑 100조 상자</button>
+<button class="warning" onclick="openSpecialBox(1000000000000000,16,1)">🌌 1,000조 상자</button>
+<button class="danger" onclick="openSpecialBox(10000000000000000,18,1)">🌠 1경 상자</button>
+</div>
+<div id="specialBoxResult" class="small" style="margin-top:12px;"></div>
+</div>
+
+</div>
+</section>
+
 <!-- 🎲 무료 행운 게임 -->
 <section id="chanceGamePage" class="page hidden">
 
@@ -11997,9 +12042,47 @@ itemIndex++;
 }
 }
 
+/* ==============================
+   ⭐ 특별 아이템 20종
+   보물/심해/차원/최상위 아이템
+   ============================== */
+const specialItems=[
+  ["🗝️ 낡은 보물 열쇠",10,80,"item",40,"luck",25],
+  ["🧭 심해 보물지도",11,150,"item",60,"rare",45],
+  ["💰 황금 보물상자",12,500,"sell",120,"item",80],
+  ["👑 왕의 보물상자",13,1500,"sell",250,"luck",100],
+  ["🐋 고래 호출기",14,4000,"rare",350,"exp",180],
+  ["🦈 상어 탐지기",14,5500,"rare",500,"speed",220],
+  ["🌊 심해 탐사권",15,12000,"luck",700,"item",350],
+  ["☄️ 운석 낚시권",15,18000,"rare",800,"exp",400],
+  ["🌌 차원 낚시권",16,40000,"luck",1200,"rare",700],
+  ["🌀 차원 보물상자",16,60000,"item",1500,"sell",900],
+  ["💎 태고의 수정",17,150000,"luck",2500,"exp",1200],
+  ["🪐 행성의 나침반",17,220000,"rare",3000,"item",1800],
+  ["♾️ 영원의 낚시표",18,600000,"speed",4500,"luck",3000],
+  ["🌠 은하 미끼함",18,900000,"rare",5500,"item",3500],
+  ["☀️ 천상의 낚시바늘",19,2500000,"rare",9000,"luck",7000],
+  ["🌌 은하 보물지도",19,5000000,"item",12000,"sell",8000],
+  ["💠 운명의 낚시표",20,15000000,"rare",20000,"luck",15000],
+  ["❓ 미지의 보물상자",20,30000000,"item",25000,"exp",18000],
+  ["👑 창조자의 보물",20,100000000,"luck",50000,"sell",30000],
+  ["🌌 차원군주의 유물",20,300000000,"rare",80000,"item",50000]
+];
+
+for(const s of specialItems){
+  items.push({
+    id:"special_item_"+(items.length),
+    name:s[0],
+    tier:s[1],
+    price:s[2],
+    abilities:{[s[3]]:s[4],[s[5]]:s[6]},
+    special:true
+  });
+}
+
 /* 데이터 수량/등급 안전장치 */
 if(fishNames.length!==2000){ console.warn("물고기 데이터 오류:",fishNames.length); }
-if(items.length!==1950){ console.warn("아이템 데이터 오류:",items.length); }
+if(items.length!==1970){ console.warn("아이템 데이터 오류:",items.length); }
 for(const f of fish){ if(!rarity[f.tier-1]) f.tier=20; }
 for(const item of items){ if(!rarity[item.tier-1]) item.tier=20; }
 
@@ -12616,6 +12699,94 @@ saveAccounts(accounts);
 
 
 /* ==============================
+🎁 특별 아이템 뽑기
+============================== */
+const SPECIAL_GACHA_COST=1000000;
+const SPECIAL_GACHA_10_COST=9000000;
+
+function getSpecialGachaItem(){
+  const pool=items.filter(x=>x.special);
+  if(!pool.length) return null;
+  const weights=pool.map(item=>{
+    // 등급이 높을수록 확률이 급격히 낮아집니다.
+    return Math.pow(0.32, Math.max(0,item.tier-10));
+  });
+  const total=weights.reduce((a,b)=>a+b,0);
+  let r=Math.random()*total;
+  for(let i=0;i<pool.length;i++){
+    r-=weights[i];
+    if(r<=0) return pool[i];
+  }
+  return pool[0];
+}
+
+function specialGacha(count){
+  if(!currentUser) return;
+  count=count===10?10:1;
+  const cost=count===10?SPECIAL_GACHA_10_COST:SPECIAL_GACHA_COST;
+  if(currentUser.coins<cost){
+    toast(`코인이 부족합니다. ${cost.toLocaleString()} 코인이 필요합니다.`);
+    return;
+  }
+
+  currentUser.coins-=cost;
+  const results=[];
+  for(let i=0;i<count;i++){
+    const item=getSpecialGachaItem();
+    if(!item) continue;
+    currentUser.itemInventory[item.id]=(currentUser.itemInventory[item.id]||0)+1;
+    if(!Array.isArray(currentUser.itemDiscovered)) currentUser.itemDiscovered=[];
+    if(!currentUser.itemDiscovered.includes(item.id)) currentUser.itemDiscovered.push(item.id);
+    results.push(item);
+  }
+
+  const resultBox=document.getElementById("specialGachaResult");
+  if(resultBox){
+    resultBox.innerHTML=results.map(item=>`<div style="margin:5px 0;font-size:18px;"><span class="rarity r${item.tier}">${item.name}</span> <span class="small">(${rarity[item.tier-1][0]} · ${item.tier}등급)</span></div>`).join("");
+  }
+  const history=document.getElementById("specialGachaHistory");
+  if(history){
+    history.innerHTML=`최근 뽑기: ${results.map(x=>`<span class="rarity r${x.tier}">${x.name}</span>`).join(" · ")}`;
+  }
+  saveGame();
+  renderAll();
+  toast(`🎁 ${count}회 뽑기 완료!`);
+}
+
+
+/* ==============================
+📦 고급 보물상자
+============================== */
+function openSpecialBox(cost,minTier,count){
+  if(!currentUser) return;
+  if(currentUser.coins<cost){
+    toast(`코인이 부족합니다. ${cost.toLocaleString()} 코인이 필요합니다.`);
+    return;
+  }
+  currentUser.coins-=cost;
+  const pool=items.filter(x=>x.special && x.tier>=minTier);
+  if(!pool.length){
+    currentUser.coins+=cost;
+    toast("상자 아이템이 없습니다.");
+    return;
+  }
+  const weights=pool.map(item=>Math.pow(0.45,Math.max(0,item.tier-minTier)));
+  const total=weights.reduce((a,b)=>a+b,0);
+  let r=Math.random()*total, picked=pool[0];
+  for(let i=0;i<pool.length;i++){
+    r-=weights[i];
+    if(r<=0){picked=pool[i];break;}
+  }
+  currentUser.itemInventory[picked.id]=(currentUser.itemInventory[picked.id]||0)+1;
+  if(!currentUser.itemDiscovered.includes(picked.id)) currentUser.itemDiscovered.push(picked.id);
+  const result=document.getElementById("specialBoxResult");
+  if(result) result.innerHTML=`🎉 <span class="rarity r${picked.tier}">${picked.name}</span> 획득! (${picked.tier}등급)`;
+  saveGame();
+  renderAll();
+  toast(`📦 상자 개봉! ${picked.name}`);
+}
+
+/* ==============================
 페이지
 ============================== */
 
@@ -12821,8 +12992,8 @@ getTotalStats().rare;
 */
 
 const tierBaseWeights=[
-30,20,15,10,7,5,3.5,2.5,1.5,1,
-0.7,0.4,0.2,0.1,0.05,0.025,0.015,0.007,0.002,0.001
+52,24,10,5.5,3,1.8,1,0.45,0.2,0.08,
+0.04,0.015,0.005,0.0025,0.0012,0.00055,0.00025,0.0001,0.00003,0.000005
 ];
 
 const safeLuck=
@@ -12938,10 +13109,11 @@ Math.random()*100<
 itemChance
 ){
 
+const normalItems=items.filter(x=>!x.special);
 itemDrop=
-items[
+normalItems[
 Math.floor(
-Math.random()*items.length
+Math.random()*normalItems.length
 )
 ];
 
@@ -14103,7 +14275,7 @@ return`
 
 <div class="item">
 
-<h3>
+<h3 class="rarity r${item.tier}">
 ${item.name}
 </h3>
 
@@ -14164,7 +14336,7 @@ return`
 
 <div class="item">
 
-<h3>
+<h3 class="rarity r${item.tier}">
 ${item.name}
 </h3>
 
@@ -14220,7 +14392,7 @@ return`
 
 <div class="item">
 
-<h3>
+<h3 class="rarity r${item.tier}">
 ${item.name}
 </h3>
 
@@ -15049,7 +15221,7 @@ return `<div class="item" style="margin-top:8px">
 <button class="warning" onclick="adminUnbanById('${id}')">밴 해제</button>
 </div>`;
 }).join("")
-:"<p class="small">밴된 계정이 없습니다.</p>";
+:`<p class="small">밴된 계정이 없습니다.</p>`;
 }
 }
 
