@@ -443,6 +443,28 @@ line-height:1.45;"></textarea>
 <!-- 낚시 -->
 <section id="fishing" class="page">
 
+<div class="owner-coin-multiplier">
+  <h3>👑 소유자 전용 코인 배수</h3>
+  <p class="small">소유자만 코인 획득량을 2배~100배로 설정할 수 있습니다.</p>
+  <div class="button-row">
+    <button onclick="setOwnerCoinMultiplier(2)">💰 2배</button>
+    <button onclick="setOwnerCoinMultiplier(4)">💰 4배</button>
+    <button onclick="setOwnerCoinMultiplier(8)">💰 8배</button>
+    <button onclick="setOwnerCoinMultiplier(12)">💰 12배</button>
+    <button onclick="setOwnerCoinMultiplier(16)">💰 16배</button>
+    <button onclick="setOwnerCoinMultiplier(20)">💰 20배</button>
+    <button onclick="setOwnerCoinMultiplier(30)">💰 30배</button>
+    <button onclick="setOwnerCoinMultiplier(40)">💰 40배</button>
+    <button onclick="setOwnerCoinMultiplier(50)">💰 50배</button>
+    <button onclick="setOwnerCoinMultiplier(75)">💰 75배</button>
+    <button onclick="setOwnerCoinMultiplier(100)">💰 100배</button>
+    <button onclick="setOwnerCoinMultiplier(1)">❌ 해제</button>
+  </div>
+  <div id="ownerCoinMultiplierStatus" class="small">현재 코인 배수: 1배</div>
+</div>
+
+
+
 <div class="card">
 <h2>🎣 낚시</h2>
 
@@ -12920,6 +12942,53 @@ return stats;
 
 }
 
+const OWNER_NICKNAME="Kevinb_703";
+let ownerCoinMultiplier=1;
+
+function isOwner(){
+  return !!currentUser && currentUser.nickname===OWNER_NICKNAME;
+}
+
+function setOwnerCoinMultiplier(multiplier){
+  if(!currentUser) return;
+  const ownerNames = ["Kevinb_703"];
+  if(!ownerNames.includes(currentUser.name)){
+    toast("👑 소유자만 사용할 수 있습니다.");
+    return;
+  }
+  multiplier = Number(multiplier);
+  const allowed = [1,2,4,8,12,16,20,30,40,50,75,100];
+  if(!allowed.includes(multiplier)) return;
+  ownerCoinMultiplier = multiplier;
+  const el = document.getElementById("ownerCoinMultiplierStatus");
+  if(el) el.textContent = `현재 코인 배수: ${multiplier}배`;
+  saveGame();
+  renderAll();
+  toast(`💰 코인 배수 ${multiplier}배 적용!`);
+}
+
+function addCoins(amount){
+  if(!currentUser || !Number.isFinite(amount)) return 0;
+  const mult=isOwner()?ownerCoinMultiplier:1;
+  const gained=Math.floor(amount*mult);
+  currentUser.coins+=gained;
+  currentUser.totalCoinsEarned=(currentUser.totalCoinsEarned||0)+gained;
+  return gained;
+}
+
+function renderOwnerCoinMultiplier(){
+  const box=document.getElementById("ownerCoinMultiplierBox");
+  if(!box) return;
+  if(!isOwner()){ box.innerHTML="<p class=\"small\">🔒 소유자 전용 기능입니다.</p>"; return; }
+  box.innerHTML=`<div style="font-size:22px;font-weight:700;margin-bottom:10px;">💰 현재 코인 배수: ${ownerCoinMultiplier}배</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="primary" onclick="setOwnerCoinMultiplier(2)">💰 2배</button>
+    <button class="primary" onclick="setOwnerCoinMultiplier(4)">💰 4배</button>
+    <button class="primary" onclick="setOwnerCoinMultiplier(8)">💰 8배</button>
+    <button class="warning" onclick="setOwnerCoinMultiplier(1)">❌ 해제</button>
+  </div>`;
+}
+
 function getTotalStats(){
 
 const itemStats=
@@ -12999,7 +13068,7 @@ expRequired();
 
 currentUser.level++;
 
-currentUser.coins+=500;
+addCoins(500);
 
 toast(
 "🎉 레벨 업! Lv."+
@@ -13429,8 +13498,7 @@ amount*
 (1+stats.sell/100)
 );
 
-currentUser.coins+=price;
-currentUser.totalCoinsEarned+=price;
+addCoins(price);
 
 delete currentUser.fishInventory[id];
 
@@ -13819,6 +13887,7 @@ renderBattle();
 renderTransfer();
 renderLevelSteal();
 renderAdmin();
+renderOwnerCoinMultiplier();
 
 }
 
@@ -15628,8 +15697,7 @@ Math.floor(
 )
 );
 
-currentUser.coins+=reward;
-currentUser.totalCoinsEarned+=reward;
+addCoins(reward);
 
 toast(
 "🏆 승리! "+
