@@ -16327,66 +16327,1744 @@ autoLogin();
 
 </script>
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🌕 10월 추석 대축제</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,"Malgun Gothic",sans-serif;
+    background:
+        radial-gradient(circle at 50% 0%,#27365f 0,#10182e 35%,#070c18 75%);
+    color:#fff;
+    min-height:100vh;
+}
+
+.container{
+    width:min(1100px,94%);
+    margin:auto;
+    padding:25px 0 50px;
+}
+
+.hero{
+    text-align:center;
+    padding:35px 20px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:25px;
+    background:linear-gradient(135deg,rgba(50,65,110,.75),rgba(10,15,30,.9));
+    box-shadow:0 15px 50px rgba(0,0,0,.35);
+    position:relative;
+    overflow:hidden;
+}
+
+.moon{
+    font-size:85px;
+    animation:moonFloat 3s ease-in-out infinite;
+}
+
+@keyframes moonFloat{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-8px)}
+}
+
+h1{
+    margin:5px 0 10px;
+    font-size:clamp(28px,5vw,50px);
+}
+
+.subtitle{
+    color:#dbe5ff;
+    font-size:17px;
+}
+
+.date{
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 20px;
+    border-radius:30px;
+    background:#6d55d9;
+    font-weight:bold;
+}
+
+.card{
+    margin-top:20px;
+    padding:22px;
+    border-radius:20px;
+    background:rgba(16,25,47,.88);
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.card h2{
+    margin-top:0;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:15px;
+}
+
+.stat{
+    background:#151f38;
+    border-radius:15px;
+    padding:18px;
+    text-align:center;
+}
+
+.stat .icon{
+    font-size:35px;
+}
+
+.stat strong{
+    display:block;
+    font-size:25px;
+    margin-top:8px;
+}
+
+button{
+    border:0;
+    border-radius:12px;
+    padding:12px 17px;
+    color:white;
+    background:#5268e8;
+    cursor:pointer;
+    font-weight:bold;
+    margin:4px;
+    transition:.15s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.15);
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+    transform:none;
+}
+
+.green{background:#168b62}
+.gold{background:#c08a21}
+.purple{background:#7650c8}
+.red{background:#b83b54}
+.gray{background:#455066}
+
+.fish-grid,
+.shop-grid,
+.achievement-grid,
+.login-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:12px;
+}
+
+.item{
+    background:#131d35;
+    padding:16px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.item-title{
+    font-size:19px;
+    font-weight:bold;
+}
+
+.item-desc{
+    color:#aeb9d2;
+    font-size:14px;
+    margin:8px 0;
+}
+
+.common{color:#b9c4d6}
+.rare{color:#4da6ff}
+.epic{color:#b06cff}
+.legend{color:#ff8d42}
+.mythic{color:#ff4c7a}
+.divine{color:#ffe36e}
+
+.log{
+    max-height:250px;
+    overflow:auto;
+    background:#080d19;
+    border-radius:12px;
+    padding:12px;
+    font-size:14px;
+}
+
+.log div{
+    padding:7px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.progress{
+    height:12px;
+    background:#080d18;
+    border-radius:20px;
+    overflow:hidden;
+    margin:10px 0;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#7062ff,#e3c65c);
+    transition:.3s;
+}
+
+.notice{
+    padding:15px;
+    border-radius:15px;
+    background:linear-gradient(90deg,#392f76,#1c294e);
+    margin-top:15px;
+}
+
+.countdown{
+    font-size:22px;
+    font-weight:bold;
+    color:#ffe58b;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.login-box{
+    max-width:420px;
+    margin:30px auto;
+    background:#101a31;
+    border-radius:20px;
+    padding:25px;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    margin:7px 0;
+    border-radius:10px;
+    border:1px solid #394764;
+    background:#080f20;
+    color:white;
+    outline:none;
+}
+
+.attendance{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:10px;
+}
+
+.day{
+    padding:15px;
+    background:#151f38;
+    border-radius:15px;
+    text-align:center;
+}
+
+.day.claimed{
+    background:#315e54;
+}
+
+.day.today{
+    border:2px solid #f4d76c;
+}
+
+.copy-area{
+    position:relative;
+}
+
+textarea{
+    width:100%;
+    height:250px;
+    resize:vertical;
+    background:#070c17;
+    color:#d9e2ff;
+    border:1px solid #303c59;
+    border-radius:12px;
+    padding:12px;
+}
+
+footer{
+    text-align:center;
+    color:#7f8ba5;
+    margin-top:30px;
+    font-size:13px;
+}
+
+@media(max-width:600px){
+    .container{
+        width:96%;
+    }
+
+    .hero{
+        padding:25px 12px;
+    }
+
+    .moon{
+        font-size:65px;
+    }
+
+    .card{
+        padding:16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="loginScreen" class="login-box">
+    <h2>🎣 낚시왕 추석 이벤트</h2>
+    <p>닉네임을 입력하면 이벤트 진행 상황이 저장됩니다.</p>
+
+    <input id="nicknameInput" maxlength="20" placeholder="닉네임 입력">
+
+    <button onclick="startEvent()">🌕 이벤트 시작</button>
+</div>
+
+<div id="gameScreen" class="hidden">
+
+<section class="hero">
+    <div class="moon">🌕</div>
+
+    <h1>10월 추석 대축제</h1>
+
+    <div class="subtitle">
+        평범했던 바다에 거대한 보름달이 떠올랐습니다.
+        <br>
+        송편을 모으고 추석 한정 물고기를 낚아보세요! 🎣
+    </div>
+
+    <div class="date">
+        📅 9월 22일 ~ 9월 30일
+    </div>
+
+    <div class="notice">
+        <div>⏰ 이벤트 종료까지</div>
+        <div id="countdown" class="countdown">계산 중...</div>
+    </div>
+</section>
+
+
+<section class="card">
+    <h2>👤 내 이벤트 정보</h2>
+
+    <div class="grid">
+
+        <div class="stat">
+            <div class="icon">👤</div>
+            <div id="nicknameText">-</div>
+        </div>
+
+        <div class="stat">
+            <div class="icon">🥮</div>
+            <strong id="songpyeon">0</strong>
+            송편
+        </div>
+
+        <div class="stat">
+            <div class="icon">🐟</div>
+            <strong id="fishCount">0</strong>
+            이벤트 물고기
+        </div>
+
+        <div class="stat">
+            <div class="icon">💰</div>
+            <strong id="coin">0</strong>
+            코인
+        </div>
+
+    </div>
+</section>
+
+
+<section class="card">
+    <h2>🌕 달빛 연못</h2>
+
+    <p>
+        이벤트 기간 동안만 이용할 수 있는 특별 낚시터입니다.
+        <br>
+        낚시할 때 송편과 추석 한정 물고기를 획득할 수 있습니다.
+    </p>
+
+    <button class="green" onclick="moonFishing()">
+        🎣 달빛 연못에서 낚시
+    </button>
+
+    <button class="purple" onclick="openTreasure()">
+        🎁 달빛 보물상자
+    </button>
+
+    <div id="fishingResult" class="notice">
+        🌊 낚시를 시작해보세요!
+    </div>
+</section>
+
+
+<section class="card">
+    <h2>🐟 추석 한정 물고기 도감</h2>
+
+    <div id="fishGrid" class="fish-grid"></div>
+</section>
+
+
+<section class="card">
+    <h2>🏮 송편 교환소</h2>
+
+    <p>
+        낚시로 모은 송편을 특별한 보상으로 교환하세요.
+    </p>
+
+    <div id="shopGrid" class="shop-grid"></div>
+</section>
+
+
+<section class="card">
+    <h2>🐇 달토끼 미니게임</h2>
+
+    <p>
+        제한 시간 동안 송편을 최대한 많이 모아보세요!
+    </p>
+
+    <div id="miniStatus">
+        🐇 게임 준비 완료
+    </div>
+
+    <button class="gold" id="miniButton" onclick="startMiniGame()">
+        🐇 미니게임 시작
+    </button>
+
+    <div class="progress">
+        <div id="miniProgress" class="progress-bar"></div>
+    </div>
+
+    <div id="miniScore">
+        현재 점수: 0
+    </div>
+</section>
+
+
+<section class="card">
+    <h2>🌕 보름달 타임</h2>
+
+    <div class="notice">
+        매일 <b>20:00 ~ 21:00</b>에는 특별한 보름달 버프가 적용됩니다.
+        <br><br>
+        🎣 희귀 물고기 확률 ×2<br>
+        🥮 송편 획득량 ×2<br>
+        ⭐ EXP 획득량 ×2<br>
+        🎁 보물상자 확률 ×2
+    </div>
+
+    <div id="moonBuffStatus" style="margin-top:12px">
+        확인 중...
+    </div>
+</section>
+
+
+<section class="card">
+    <h2>📅 9일 출석 이벤트</h2>
+
+    <p>
+        매일 한 번씩 출석하고 특별한 보상을 받으세요.
+    </p>
+
+    <div id="attendance" class="attendance"></div>
+</section>
+
+
+<section class="card">
+    <h2>🏆 추석 이벤트 업적</h2>
+
+    <div id="achievementGrid" class="achievement-grid"></div>
+</section>
+
+
+<section class="card">
+    <h2>📜 이벤트 기록</h2>
+
+    <div id="log" class="log"></div>
+</section>
+
+
+<section class="card">
+    <h2>💾 데이터 관리</h2>
+
+    <button onclick="saveData()">
+        💾 저장
+    </button>
+
+    <button class="red" onclick="resetEvent()">
+        🗑 이벤트 데이터 초기화
+    </button>
+</section>
+
+
+<section class="card">
+    <h2>📋 전체 코드 복사</h2>
+
+    <div class="copy-area">
+        <textarea id="codeBox" readonly></textarea>
+
+        <button onclick="copyFullCode()">
+            📋 전체 코드 복사
+        </button>
+    </div>
+</section>
+
+</div>
+
+<footer>
+    🌕 10월 추석 대축제 · 낚시왕 이벤트
+</footer>
+
+</div>
 
 
 <script>
-function getFullHTMLSource(){
-return "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+/* =====================================================
+   기본 설정
+===================================================== */
+
+const EVENT_START = new Date("2026-09-22T00:00:00+09:00").getTime();
+const EVENT_END   = new Date("2026-09-30T23:59:59+09:00").getTime();
+
+const STORAGE_KEY = "fishingKing_chuseok_2026";
+
+let data = {
+    nickname:"",
+    songpyeon:0,
+    coin:0,
+    fishCount:0,
+    fishCaught:{},
+    openedTreasure:0,
+    miniGames:0,
+    miniBest:0,
+    attendance:[],
+    achievements:[],
+    logs:[]
+};
+
+
+/* =====================================================
+   이벤트 물고기
+===================================================== */
+
+const EVENT_FISH = [
+
+    {
+        id:"songpyeon_bream",
+        name:"🥮 송편붕어",
+        rarity:"common",
+        chance:35,
+        reward:100
+    },
+
+    {
+        id:"moon_carp",
+        name:"🌕 달빛 잉어",
+        rarity:"rare",
+        chance:25,
+        reward:500
+    },
+
+    {
+        id:"fullmoon_puffer",
+        name:"🌕 보름달 복어",
+        rarity:"epic",
+        chance:18,
+        reward:1500
+    },
+
+    {
+        id:"rabbit_seahorse",
+        name:"🐇 달토끼 해마",
+        rarity:"legend",
+        chance:10,
+        reward:5000
+    },
+
+    {
+        id:"gold_moonfish",
+        name:"✨ 황금 보름달고기",
+        rarity:"mythic",
+        chance:6,
+        reward:20000
+    },
+
+    {
+        id:"moon_dragon",
+        name:"🌌 월광룡",
+        rarity:"divine",
+        chance:5.99,
+        reward:100000
+    },
+
+    {
+        id:"chuseok_dragon",
+        name:"👑 추석의 신령한 용",
+        rarity:"divine",
+        chance:0.01,
+        reward:1000000
+    }
+
+];
+
+
+/* =====================================================
+   교환소
+===================================================== */
+
+const SHOP = [
+
+    {
+        id:"coin1",
+        name:"💰 코인 100만",
+        price:100,
+        action:()=>{
+            data.coin += 1000000;
+            addLog("💰 코인 100만을 획득했습니다!");
+        }
+    },
+
+    {
+        id:"bait",
+        name:"🎣 추석 특별 미끼 ×10",
+        price:500,
+        action:()=>{
+            addLog("🎣 추석 특별 미끼 ×10 획득!");
+        }
+    },
+
+    {
+        id:"goldSong",
+        name:"🟡 황금 송편 ×5",
+        price:1000,
+        action:()=>{
+            addLog("🟡 황금 송편 ×5 획득!");
+        }
+    },
+
+    {
+        id:"moonBait",
+        name:"🌕 달빛 미끼 ×20",
+        price:5000,
+        action:()=>{
+            addLog("🌕 달빛 미끼 ×20 획득!");
+        }
+    },
+
+    {
+        id:"rod",
+        name:"🎣 추석의 달빛 낚싯대",
+        price:10000,
+        action:()=>{
+            addLog("🎣 추석의 달빛 낚싯대를 획득했습니다!");
+        }
+    },
+
+    {
+        id:"treasure",
+        name:"👑 보름달의 유산",
+        price:30000,
+        action:()=>{
+            addLog("👑 보름달의 유산을 획득했습니다!");
+        }
+    }
+
+];
+
+
+/* =====================================================
+   업적
+===================================================== */
+
+const ACHIEVEMENTS = [
+
+    {
+        id:"first",
+        name:"🏮 추석의 시작",
+        desc:"첫 이벤트 낚시 성공",
+        check:()=>data.fishCount>=1
+    },
+
+    {
+        id:"song1000",
+        name:"🥮 송편 수집가",
+        desc:"송편 1,000개 획득",
+        check:()=>data.songpyeon>=1000
+    },
+
+    {
+        id:"fish100",
+        name:"🎣 달빛 낚시꾼",
+        desc:"이벤트 물고기 100마리 획득",
+        check:()=>data.fishCount>=100
+    },
+
+    {
+        id:"allfish",
+        name:"🌕 보름달의 수집가",
+        desc:"이벤트 물고기 7종 모두 획득",
+        check:()=>Object.keys(data.fishCaught).length>=7
+    },
+
+    {
+        id:"mini50",
+        name:"🐇 달토끼의 친구",
+        desc:"미니게임 50회 플레이",
+        check:()=>data.miniGames>=50
+    },
+
+    {
+        id:"best100",
+        name:"🥮 송편 장인",
+        desc:"미니게임에서 100점 달성",
+        check:()=>data.miniBest>=100
+    },
+
+    {
+        id:"treasure10",
+        name:"🎁 보물 사냥꾼",
+        desc:"달빛 보물상자 10개 개봉",
+        check:()=>data.openedTreasure>=10
+    },
+
+    {
+        id:"legend",
+        name:"👑 추석의 전설",
+        desc:"추석의 신령한 용 획득",
+        check:()=>!!data.fishCaught.chuseok_dragon
+    }
+
+];
+
+
+/* =====================================================
+   초기화
+===================================================== */
+
+function loadData(){
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if(saved){
+
+        try{
+            data = JSON.parse(saved);
+        }catch(e){
+            console.log("저장 데이터 오류");
+        }
+
+    }
+
+    if(data.nickname){
+        showGame();
+    }
+
 }
 
-function copyAllSource(){
-const source=getFullHTMLSource();
-const btn=document.getElementById("copyAllSourceBtn");
 
-function success(){
-if(btn){
-const old=btn.textContent;
-btn.textContent="✅ 전체 코드 복사 완료!";
-setTimeout(()=>btn.textContent=old,1800);
-}
-}
+function saveData(){
 
-if(navigator.clipboard && window.isSecureContext){
-navigator.clipboard.writeText(source).then(success).catch(()=>{
-fallbackCopySource(source,success);
-});
-}else{
-fallbackCopySource(source,success);
-}
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+
+    render();
+
 }
 
-function fallbackCopySource(source,done){
-const box=document.createElement("textarea");
-box.value=source;
-box.style.position="fixed";
-box.style.left="-9999px";
-document.body.appendChild(box);
-box.focus();
-box.select();
 
-try{
-document.execCommand("copy");
-done();
-}catch(e){
-alert("자동 복사에 실패했습니다. 코드 보기에서 전체 코드를 직접 복사해주세요.");
+/* =====================================================
+   시작
+===================================================== */
+
+function startEvent(){
+
+    const nickname =
+        document.getElementById("nicknameInput").value.trim();
+
+    if(!nickname){
+        alert("닉네임을 입력해주세요.");
+        return;
+    }
+
+    data.nickname = nickname;
+
+    addLog(
+        "🌕 " +
+        nickname +
+        "님이 추석 대축제에 참가했습니다!"
+    );
+
+    saveData();
+
+    showGame();
+
 }
 
-box.remove();
+
+function showGame(){
+
+    document.getElementById("loginScreen")
+        .classList.add("hidden");
+
+    document.getElementById("gameScreen")
+        .classList.remove("hidden");
+
+    document.getElementById("nicknameText")
+        .textContent = data.nickname;
+
+    render();
+
 }
 
-function toggleSourceViewer(){
-const viewer=document.getElementById("sourceViewer");
-const box=document.getElementById("sourceCodeBox");
 
-if(viewer.style.display==="none"){
-box.value=getFullHTMLSource();
-viewer.style.display="block";
-}else{
-viewer.style.display="none";
+/* =====================================================
+   이벤트 기간
+===================================================== */
+
+function checkEvent(){
+
+    const now = Date.now();
+
+    if(now < EVENT_START){
+
+        document.getElementById("fishingResult")
+            .innerHTML =
+            "⏳ 이벤트 시작 전입니다.<br>" +
+            "📅 9월 22일 00:00부터 시작됩니다.";
+
+        return false;
+
+    }
+
+    if(now > EVENT_END){
+
+        document.getElementById("fishingResult")
+            .innerHTML =
+            "🔒 이벤트가 종료되었습니다.";
+
+        return false;
+
+    }
+
+    return true;
+
 }
+
+
+/* =====================================================
+   달빛 낚시
+===================================================== */
+
+function moonFishing(){
+
+    if(!checkEvent()) return;
+
+    const isBuff =
+        isMoonBuff();
+
+    let song = randomInt(10,30);
+
+    if(isBuff){
+        song *= 2;
+    }
+
+    data.songpyeon += song;
+
+    const fish =
+        randomFish();
+
+    data.fishCount++;
+
+    if(!data.fishCaught[fish.id]){
+        data.fishCaught[fish.id]=0;
+    }
+
+    data.fishCaught[fish.id]++;
+
+    data.coin += fish.reward;
+
+    let bonus =
+        isBuff ? "<br>🌕 보름달 버프 적용! ×2" : "";
+
+    document.getElementById("fishingResult")
+        .innerHTML =
+        "🎣 낚시 성공!<br>" +
+        fish.name +
+        " 획득!<br>" +
+        "🥮 송편 +" + song +
+        "<br>💰 코인 +" + format(fish.reward) +
+        bonus;
+
+    addLog(
+        "🎣 " +
+        fish.name +
+        " 획득 / 🥮 +" +
+        song +
+        " / 💰 +" +
+        format(fish.reward)
+    );
+
+    checkAchievements();
+
+    saveData();
+
 }
+
+
+/* =====================================================
+   물고기 랜덤
+===================================================== */
+
+function randomFish(){
+
+    let total = 0;
+
+    for(const fish of EVENT_FISH){
+        total += fish.chance;
+    }
+
+    let roll =
+        Math.random()*total;
+
+    for(const fish of EVENT_FISH){
+
+        roll -= fish.chance;
+
+        if(roll <= 0){
+            return fish;
+        }
+
+    }
+
+    return EVENT_FISH[0];
+
+}
+
+
+/* =====================================================
+   보물상자
+===================================================== */
+
+function openTreasure(){
+
+    if(!checkEvent()) return;
+
+    const cost = 500;
+
+    if(data.songpyeon < cost){
+
+        alert(
+            "🥮 송편이 부족합니다!\n" +
+            "필요: " + cost
+        );
+
+        return;
+
+    }
+
+    data.songpyeon -= cost;
+    data.openedTreasure++;
+
+    const roll = Math.random();
+
+    let message="";
+
+    if(roll < 0.01){
+
+        data.coin += 100000000;
+        message =
+            "👑 초대박!\n" +
+            "💰 1억 코인 획득!";
+
+    }else if(roll < 0.06){
+
+        data.coin += 10000000;
+        message =
+            "✨ 대박!\n" +
+            "💰 1천만 코인 획득!";
+
+    }else if(roll < 0.20){
+
+        data.songpyeon += 3000;
+        message =
+            "🌕 달빛 송편 3,000개 획득!";
+
+    }else if(roll < 0.50){
+
+        data.coin += 1000000;
+        message =
+            "💰 코인 100만 획득!";
+
+    }else{
+
+        data.songpyeon += 500;
+        message =
+            "🥮 송편 500개 획득!";
+
+    }
+
+    alert(
+        "🎁 달빛 보물상자 결과\n\n" +
+        message
+    );
+
+    addLog(
+        "🎁 달빛 보물상자 개봉 → " +
+        message.replace("\n"," ")
+    );
+
+    checkAchievements();
+
+    saveData();
+
+}
+
+
+/* =====================================================
+   미니게임
+===================================================== */
+
+let miniRunning=false;
+let miniTimer=null;
+let miniScore=0;
+let miniSeconds=0;
+
+function startMiniGame(){
+
+    if(!checkEvent()) return;
+
+    if(miniRunning) return;
+
+    miniRunning=true;
+    miniScore=0;
+    miniSeconds=15;
+
+    document.getElementById("miniButton")
+        .textContent="🥮 송편 클릭!";
+
+    document.getElementById("miniButton")
+        .onclick=miniClick;
+
+    updateMini();
+
+    miniTimer=setInterval(()=>{
+
+        miniSeconds--;
+
+        updateMini();
+
+        if(miniSeconds<=0){
+            finishMiniGame();
+        }
+
+    },1000);
+
+}
+
+
+function miniClick(){
+
+    if(!miniRunning) return;
+
+    miniScore++;
+
+    updateMini();
+
+}
+
+
+function updateMini(){
+
+    document.getElementById("miniStatus")
+        .textContent =
+        "⏱ 남은 시간: " +
+        miniSeconds +
+        "초";
+
+    document.getElementById("miniScore")
+        .textContent =
+        "🥮 현재 점수: " +
+        miniScore;
+
+    const percent =
+        Math.max(
+            0,
+            Math.min(100,(miniSeconds/15)*100)
+        );
+
+    document.getElementById("miniProgress")
+        .style.width=percent+"%";
+
+}
+
+
+function finishMiniGame(){
+
+    clearInterval(miniTimer);
+
+    miniRunning=false;
+
+    data.miniGames++;
+
+    if(miniScore > data.miniBest){
+        data.miniBest=miniScore;
+    }
+
+    const reward =
+        miniScore * 10;
+
+    data.songpyeon += reward;
+
+    document.getElementById("miniButton")
+        .textContent="🐇 미니게임 시작";
+
+    document.getElementById("miniButton")
+        .onclick=startMiniGame;
+
+    document.getElementById("miniStatus")
+        .textContent =
+        "🎊 게임 종료!";
+
+    addLog(
+        "🐇 미니게임 종료 → " +
+        miniScore +
+        "점 / 🥮 +" +
+        reward
+    );
+
+    checkAchievements();
+
+    saveData();
+
+}
+
+
+/* =====================================================
+   보름달 버프
+===================================================== */
+
+function isMoonBuff(){
+
+    const now = new Date();
+
+    const hour = now.getHours();
+
+    return hour>=20 && hour<21;
+
+}
+
+
+function updateMoonBuff(){
+
+    const el =
+        document.getElementById("moonBuffStatus");
+
+    if(isMoonBuff()){
+
+        el.innerHTML =
+            "🌕 <b style='color:#ffe36e'>" +
+            "현재 보름달 타임입니다!</b><br>" +
+            "🎣 희귀 물고기 확률 ×2<br>" +
+            "🥮 송편 획득량 ×2<br>" +
+            "⭐ EXP ×2<br>" +
+            "🎁 보물상자 확률 ×2";
+
+    }else{
+
+        el.innerHTML =
+            "🌙 현재는 일반 시간입니다.<br>" +
+            "🌕 <b>20:00 ~ 21:00</b>에 보름달 버프가 활성화됩니다.";
+
+    }
+
+}
+
+
+/* =====================================================
+   출석
+===================================================== */
+
+function getEventDay(){
+
+    const now =
+        new Date();
+
+    const start =
+        new Date("2026-09-22T00:00:00+09:00");
+
+    const diff =
+        Math.floor(
+            (
+                new Date(
+                    now.toLocaleString(
+                        "en-US",
+                        {timeZone:"Asia/Seoul"}
+                    )
+                ).getTime()
+                -
+                start.getTime()
+            )
+            /
+            86400000
+        );
+
+    return diff+1;
+
+}
+
+
+function attendance(){
+
+    const day =
+        getEventDay();
+
+    if(day<1 || day>9){
+        alert("현재 출석 이벤트 기간이 아닙니다.");
+        return;
+    }
+
+    if(data.attendance.includes(day)){
+
+        alert("이미 오늘 출석했습니다.");
+
+        return;
+
+    }
+
+    const rewards = [
+        100,
+        300,
+        500,
+        1000,
+        2000,
+        3000,
+        5000,
+        10000,
+        30000
+    ];
+
+    const reward =
+        rewards[day-1];
+
+    data.songpyeon += reward;
+
+    data.attendance.push(day);
+
+    addLog(
+        "📅 " +
+        day +
+        "일차 출석 완료 → 🥮 +" +
+        reward
+    );
+
+    saveData();
+
+}
+
+
+function renderAttendance(){
+
+    const el =
+        document.getElementById("attendance");
+
+    el.innerHTML="";
+
+    for(let i=1;i<=9;i++){
+
+        const reward =
+            [
+                100,
+                300,
+                500,
+                1000,
+                2000,
+                3000,
+                5000,
+                10000,
+                30000
+            ][i-1];
+
+        const claimed =
+            data.attendance.includes(i);
+
+        const today =
+            getEventDay()===i;
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "day " +
+            (claimed?"claimed ":"") +
+            (today?"today":"");
+
+        div.innerHTML =
+            "<b>9/" +
+            (21+i) +
+            "</b>" +
+            "<br><br>" +
+            (claimed?"✅ 출석 완료":"🥮 "+reward);
+
+        if(today && !claimed){
+
+            div.innerHTML +=
+                "<br><button onclick='attendance()'>출석</button>";
+
+        }
+
+        el.appendChild(div);
+
+    }
+
+}
+
+
+/* =====================================================
+   상점 렌더
+===================================================== */
+
+function renderShop(){
+
+    const el =
+        document.getElementById("shopGrid");
+
+    el.innerHTML="";
+
+    SHOP.forEach(item=>{
+
+        const div =
+            document.createElement("div");
+
+        div.className="item";
+
+        div.innerHTML=
+            "<div class='item-title'>"+
+            item.name+
+            "</div>"+
+            "<div class='item-desc'>"+
+            "🥮 "+format(item.price)+" 송편"+
+            "</div>"+
+            "<button onclick='buyShop(\""+
+            item.id+
+            "\")'>교환하기</button>";
+
+        el.appendChild(div);
+
+    });
+
+}
+
+
+function buyShop(id){
+
+    const item =
+        SHOP.find(x=>x.id===id);
+
+    if(!item) return;
+
+    if(data.songpyeon < item.price){
+
+        alert(
+            "🥮 송편이 부족합니다!"
+        );
+
+        return;
+
+    }
+
+    data.songpyeon -= item.price;
+
+    item.action();
+
+    saveData();
+
+}
+
+
+/* =====================================================
+   물고기 렌더
+===================================================== */
+
+function renderFish(){
+
+    const el =
+        document.getElementById("fishGrid");
+
+    el.innerHTML="";
+
+    EVENT_FISH.forEach(fish=>{
+
+        const count =
+            data.fishCaught[fish.id] || 0;
+
+        const div =
+            document.createElement("div");
+
+        div.className="item";
+
+        div.innerHTML=
+            "<div class='item-title "+fish.rarity+"'>"+
+            fish.name+
+            "</div>"+
+            "<div class='item-desc'>"+
+            "등급: "+fish.rarity+
+            "<br>"+
+            "획득 수: "+count+
+            "<br>"+
+            "판매가: 💰 "+format(fish.reward)+
+            "</div>";
+
+        el.appendChild(div);
+
+    });
+
+}
+
+
+/* =====================================================
+   업적
+===================================================== */
+
+function checkAchievements(){
+
+    ACHIEVEMENTS.forEach(a=>{
+
+        if(
+            !data.achievements.includes(a.id)
+            &&
+            a.check()
+        ){
+
+            data.achievements.push(a.id);
+
+            data.coin += 500000;
+
+            addLog(
+                "🏆 업적 달성! " +
+                a.name +
+                " / 💰 +500,000"
+            );
+
+        }
+
+    });
+
+}
+
+
+function renderAchievements(){
+
+    const el =
+        document.getElementById("achievementGrid");
+
+    el.innerHTML="";
+
+    ACHIEVEMENTS.forEach(a=>{
+
+        const done =
+            data.achievements.includes(a.id);
+
+        const div =
+            document.createElement("div");
+
+        div.className="item";
+
+        div.innerHTML=
+            "<div class='item-title'>"+
+            (done?"✅ ":"🔒 ")+
+            a.name+
+            "</div>"+
+            "<div class='item-desc'>"+
+            a.desc+
+            "</div>"+
+            (done
+                ?"<div style='color:#73e6a7'>달성 완료</div>"
+                :"<div style='color:#8793aa'>미달성</div>"
+            );
+
+        el.appendChild(div);
+
+    });
+
+}
+
+
+/* =====================================================
+   로그
+===================================================== */
+
+function addLog(text){
+
+    const time =
+        new Date().toLocaleTimeString("ko-KR");
+
+    data.logs.unshift(
+        "["+time+"] "+text
+    );
+
+    if(data.logs.length>100){
+        data.logs.pop();
+    }
+
+    renderLogs();
+
+}
+
+
+function renderLogs(){
+
+    const el =
+        document.getElementById("log");
+
+    if(!el) return;
+
+    el.innerHTML =
+        data.logs
+        .map(x=>"<div>"+escapeHtml(x)+"</div>")
+        .join("");
+
+}
+
+
+/* =====================================================
+   화면 갱신
+===================================================== */
+
+function render(){
+
+    document.getElementById("nicknameText")
+        .textContent=data.nickname;
+
+    document.getElementById("songpyeon")
+        .textContent=format(data.songpyeon);
+
+    document.getElementById("coin")
+        .textContent=format(data.coin);
+
+    document.getElementById("fishCount")
+        .textContent=format(data.fishCount);
+
+    renderFish();
+    renderShop();
+    renderAttendance();
+    renderAchievements();
+    renderLogs();
+    updateMoonBuff();
+    updateCountdown();
+
+}
+
+
+/* =====================================================
+   카운트다운
+===================================================== */
+
+function updateCountdown(){
+
+    const el =
+        document.getElementById("countdown");
+
+    if(!el) return;
+
+    const now =
+        Date.now();
+
+    if(now < EVENT_START){
+
+        const diff =
+            EVENT_START-now;
+
+        el.textContent =
+            "이벤트 시작까지 " +
+            timeText(diff);
+
+        return;
+
+    }
+
+    if(now > EVENT_END){
+
+        el.textContent =
+            "🌕 이벤트 종료";
+
+        return;
+
+    }
+
+    const diff =
+        EVENT_END-now;
+
+    el.textContent =
+        timeText(diff);
+
+}
+
+
+function timeText(ms){
+
+    let sec =
+        Math.floor(ms/1000);
+
+    const day =
+        Math.floor(sec/86400);
+
+    sec%=86400;
+
+    const hour =
+        Math.floor(sec/3600);
+
+    sec%=3600;
+
+    const min =
+        Math.floor(sec/60);
+
+    sec%=60;
+
+    return (
+        day+"일 "+
+        hour+"시간 "+
+        min+"분 "+
+        sec+"초"
+    );
+
+}
+
+
+/* =====================================================
+   초기화
+===================================================== */
+
+function resetEvent(){
+
+    if(
+        !confirm(
+            "정말 이벤트 데이터를 초기화할까요?\n" +
+            "복구할 수 없습니다."
+        )
+    ){
+        return;
+    }
+
+    localStorage.removeItem(STORAGE_KEY);
+
+    location.reload();
+
+}
+
+
+/* =====================================================
+   전체 코드 복사
+===================================================== */
+
+function copyFullCode(){
+
+    const code =
+        document.documentElement.outerHTML;
+
+    const box =
+        document.getElementById("codeBox");
+
+    box.value=code;
+
+    navigator.clipboard.writeText(code)
+        .then(()=>{
+            alert("📋 전체 HTML 코드가 복사되었습니다!");
+        })
+        .catch(()=>{
+            box.select();
+            document.execCommand("copy");
+            alert("📋 전체 HTML 코드가 복사되었습니다!");
+        });
+
+}
+
+
+/* =====================================================
+   유틸
+===================================================== */
+
+function randomInt(min,max){
+
+    return Math.floor(
+        Math.random()*(max-min+1)
+    )+min;
+
+}
+
+
+function format(num){
+
+    return Number(num || 0)
+        .toLocaleString("ko-KR");
+
+}
+
+
+function escapeHtml(str){
+
+    return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =====================================================
+   코드 박스
+===================================================== */
+
+function prepareCodeBox(){
+
+    const box =
+        document.getElementById("codeBox");
+
+    if(box){
+        box.value =
+            document.documentElement.outerHTML;
+    }
+
+}
+
+
+/* =====================================================
+   실행
+===================================================== */
+
+loadData();
+
+setInterval(()=>{
+    updateCountdown();
+    updateMoonBuff();
+},1000);
+
+setInterval(()=>{
+    render();
+},5000);
+
+prepareCodeBox();
+
 </script>
 
-
-
-</body></html>
+</body>
+</html>
+<script>
