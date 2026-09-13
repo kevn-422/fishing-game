@@ -1,886 +1,46 @@
 <!DOCTYPE html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>🎣 낚시왕</title>
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>🎣 낚시게임 사이트</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 /* 기존 CSS */
 </style>
+</head>
 
-<style>
-/* ===== PREMIUM AQUA UI OVERHAUL ===== */
-:root{
- --bg:#050914;--panel:rgba(12,24,43,.78);--panel2:rgba(18,34,58,.82);
- --line:rgba(120,190,255,.18);--text:#f5fbff;--muted:#8fa9c5;
- --blue:#38bdf8;--cyan:#22d3ee;--violet:#8b5cf6;--pink:#f472b6;
- --green:#34d399;--gold:#fbbf24;--red:#fb7185;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
- margin:0;min-height:100vh;color:var(--text);
- font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
- background:
- radial-gradient(circle at 15% 10%,rgba(34,211,238,.16),transparent 28%),
- radial-gradient(circle at 85% 15%,rgba(139,92,246,.18),transparent 30%),
- radial-gradient(circle at 50% 100%,rgba(56,189,248,.10),transparent 35%),
- linear-gradient(145deg,#020617,#071326 52%,#030712);
- background-attachment:fixed;
-}
-body:before{
- content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
- background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
- background-size:40px 40px;mask-image:linear-gradient(to bottom,#000,transparent 90%);
-}
-.container{max-width:1180px!important;padding:28px!important}
-.card{
- position:relative;overflow:hidden;
- background:linear-gradient(145deg,rgba(15,32,55,.88),rgba(7,18,34,.82))!important;
- border:1px solid var(--line)!important;border-radius:22px!important;
- padding:24px!important;margin-bottom:18px!important;
- box-shadow:0 18px 55px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.045);
- backdrop-filter:blur(16px);
- transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
-}
-.card:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(56,189,248,.06),transparent 35%,rgba(139,92,246,.05))}
-.card:hover{border-color:rgba(56,189,248,.3)!important;box-shadow:0 22px 65px rgba(0,0,0,.34),0 0 35px rgba(34,211,238,.05)}
-h1,h2,h3{letter-spacing:-.02em}
-h1{font-size:clamp(28px,4vw,42px);text-shadow:0 0 25px rgba(56,189,248,.25)}
-h2{font-size:25px}
-.small{color:var(--muted)!important}
-button{
- position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)!important;
- border-radius:13px!important;padding:12px 17px!important;color:#fff;
- background:linear-gradient(135deg,#203654,#172a45)!important;
- box-shadow:0 7px 18px rgba(0,0,0,.18);
- transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;
-}
-button:after{content:"";position:absolute;inset:-100% 30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:rotate(20deg);transition:transform .5s}
-button:hover{transform:translateY(-2px);filter:brightness(1.13);box-shadow:0 10px 25px rgba(0,0,0,.3)}
-button:hover:after{transform:translateX(250%) rotate(20deg)}
-.primary{background:linear-gradient(135deg,#0ea5e9,#2563eb)!important;box-shadow:0 8px 25px rgba(37,99,235,.3)}
-.success{background:linear-gradient(135deg,#10b981,#059669)!important}
-.danger{background:linear-gradient(135deg,#f43f5e,#be123c)!important}
-.warning{background:linear-gradient(135deg,#f59e0b,#d97706)!important}
-.nav{gap:8px!important;margin-top:18px!important}
-.nav button{background:rgba(24,48,77,.75)!important}
-.nav button:hover{background:linear-gradient(135deg,#164e73,#3730a3)!important}
-input,select{
- width:100%;padding:13px 15px!important;margin:7px 0!important;
- border-radius:13px!important;border:1px solid rgba(120,190,255,.2)!important;
- background:rgba(3,12,27,.72)!important;color:#fff!important;
- outline:none;box-shadow:inset 0 1px rgba(255,255,255,.04);
- transition:border-color .2s,box-shadow .2s,transform .2s;
-}
-input:focus,select:focus{border-color:rgba(34,211,238,.7)!important;box-shadow:0 0 0 3px rgba(34,211,238,.1),0 0 25px rgba(34,211,238,.08);transform:translateY(-1px)}
-.grid{gap:14px!important}
-.stat,.item{
- background:linear-gradient(145deg,rgba(23,47,75,.72),rgba(10,25,46,.76))!important;
- border:1px solid rgba(120,190,255,.12);border-radius:17px!important;
- padding:17px!important;box-shadow:inset 0 1px rgba(255,255,255,.04);
- transition:transform .2s,border-color .2s,box-shadow .2s;
-}
-.stat:hover,.item:hover{transform:translateY(-3px);border-color:rgba(56,189,248,.28);box-shadow:0 12px 30px rgba(0,0,0,.22),0 0 20px rgba(56,189,248,.05)}
-.big{font-size:32px!important;font-weight:850!important;line-height:1.15;text-shadow:0 0 18px rgba(255,255,255,.08)}
-.progress{height:16px!important;background:#071426!important;border:1px solid rgba(120,190,255,.12);padding:2px}
-.progress-bar{
- border-radius:10px;background:linear-gradient(90deg,#06b6d4,#38bdf8,#8b5cf6)!important;
- box-shadow:0 0 18px rgba(56,189,248,.55);position:relative;overflow:hidden;
-}
-.progress-bar:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 1.8s linear infinite}
-table{overflow:hidden;border-radius:14px}
-th{background:rgba(56,189,248,.08);color:#bfeaff}
-th,td{border-bottom:1px solid rgba(120,190,255,.1)!important;padding:13px!important}
-#toast{
- background:linear-gradient(135deg,rgba(14,165,233,.95),rgba(79,70,229,.95))!important;
- border:1px solid rgba(255,255,255,.22)!important;border-radius:14px!important;
- box-shadow:0 15px 45px rgba(0,0,0,.45),0 0 30px rgba(34,211,238,.2)!important;
- backdrop-filter:blur(12px);animation:toastIn .25s ease;
-}
-.auth .card{text-align:center;padding:32px!important}
-.auth{max-width:460px!important;margin:70px auto!important}
-#userInfo{
- display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;
- margin-top:4px;padding:10px 15px;border-radius:999px;
- background:rgba(8,25,46,.8);border:1px solid rgba(56,189,248,.14);color:#ccecff;
-}
-.fish-result{min-height:220px!important;background:radial-gradient(circle at center,rgba(34,211,238,.08),transparent 60%)!important}
-.fish-result .big{font-size:64px!important;animation:float 3s ease-in-out infinite}
-.rarity{font-weight:900!important}
-.r13,.r14,.r15,.r16,.r17,.r18,.r19,.r20{filter:drop-shadow(0 0 5px currentColor)}
-#sourceCopyPanel{border:1px solid rgba(120,190,255,.2)!important;background:rgba(7,18,34,.88)!important;backdrop-filter:blur(15px);box-shadow:0 18px 50px rgba(0,0,0,.45)!important}
-#sourceViewer{backdrop-filter:blur(18px);background:rgba(2,8,23,.94)!important;border-color:rgba(56,189,248,.22)!important}
-@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes toastIn{from{opacity:0;transform:translate(-50%,15px)}to{opacity:1;transform:translate(-50%,0)}}
-@media(max-width:700px){
- .container{padding:14px!important}.card{padding:18px!important;border-radius:18px!important}
- .nav{display:grid!important;grid-template-columns:repeat(2,1fr)}
- .nav button{width:100%;margin:0!important}.big{font-size:27px!important}
- #userInfo{border-radius:15px;display:flex}
-}
-</style>
+<head>
+    ...
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
 
-<style id="game-ui-overhaul">
-/* ===== GAME UI OVERHAUL ===== */
-:root{
-  --g-bg:#07111f;
-  --g-panel:rgba(9,23,42,.82);
-  --g-panel2:rgba(14,34,58,.9);
-  --g-line:rgba(92,211,255,.22);
-  --g-cyan:#55e7ff;
-  --g-blue:#4d7cff;
-  --g-purple:#9a6cff;
-  --g-gold:#ffd76a;
-  --g-green:#48e6a3;
-  --g-red:#ff617d;
-  --g-text:#edf9ff;
-  --g-muted:#8faac1;
-}
+<body>
+    ...
+    
+<script>
+    // ⭐ 여기에 넣기
+    const SUPABASE_URL = "https://cmtukjywweternybcbyg.supabase.co"
+    const Publishable = "sb_publishable_kFxW5ZyrphPOWHa9ZJzZmg_kcgwX-vg";
 
-html,body{
-  background:
-    radial-gradient(circle at 50% -10%,rgba(56,174,255,.24),transparent 35%),
-    radial-gradient(circle at 0% 55%,rgba(91,73,255,.14),transparent 28%),
-    linear-gradient(180deg,#071522 0%,#030812 100%) !important;
-  color:var(--g-text);
-}
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
 
-body{
-  min-height:100vh;
-  font-family:Inter,Pretendard,"Noto Sans KR",sans-serif;
-  overflow-x:hidden;
-}
+    // 기존 낚시게임 JavaScript
+</script>
 
-/* animated ocean light */
-body::before{
-  content:"";
-  position:fixed; inset:-30%;
-  pointer-events:none; z-index:-1;
-  background:
-    radial-gradient(ellipse at 30% 20%,rgba(67,220,255,.09),transparent 25%),
-    radial-gradient(ellipse at 75% 65%,rgba(123,82,255,.08),transparent 30%);
-  animation:oceanDrift 12s ease-in-out infinite alternate;
-}
-@keyframes oceanDrift{from{transform:translate3d(-2%,0,0) scale(1)}to{transform:translate3d(2%,-2%,0) scale(1.05)}}
-
-/* ===== TOP HUD ===== */
-#game-page > header,
-#game-page header{
-  position:sticky;
-  top:10px;
-  z-index:20;
-  margin:10px auto 16px;
-  padding:14px 16px !important;
-  max-width:1180px;
-  border:1px solid rgba(113,225,255,.2);
-  border-radius:22px;
-  background:linear-gradient(135deg,rgba(9,25,45,.94),rgba(8,17,33,.9));
-  box-shadow:0 14px 50px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.07);
-  backdrop-filter:blur(18px);
-}
-
-#game-page header h1{
-  letter-spacing:-.04em;
-  text-shadow:0 0 24px rgba(85,231,255,.3);
-}
-
-/* player HUD / currency pills */
-#user-info, .user-info{
-  border:1px solid rgba(85,231,255,.2) !important;
-  background:linear-gradient(135deg,rgba(16,42,68,.9),rgba(8,20,37,.9)) !important;
-  box-shadow:0 8px 24px rgba(0,0,0,.25), inset 0 1px rgba(255,255,255,.06) !important;
-}
-
-/* ===== NAV = GAME MENU ===== */
-nav{
-  display:flex !important;
-  gap:8px !important;
-  padding:8px !important;
-  margin:10px auto 18px !important;
-  max-width:1180px;
-  border:1px solid rgba(93,210,255,.15);
-  border-radius:18px;
-  background:rgba(5,15,28,.72);
-  box-shadow:0 12px 35px rgba(0,0,0,.28);
-  backdrop-filter:blur(14px);
-  overflow-x:auto;
-}
-nav button{
-  position:relative;
-  flex:0 0 auto;
-  min-height:42px;
-  border:1px solid rgba(130,205,255,.12) !important;
-  border-radius:13px !important;
-  background:linear-gradient(180deg,rgba(24,49,75,.85),rgba(10,25,43,.9)) !important;
-  color:#bcd7e9 !important;
-  font-weight:800 !important;
-  transition:.2s ease !important;
-  box-shadow:inset 0 1px rgba(255,255,255,.05);
-}
-nav button:hover{
-  transform:translateY(-2px);
-  color:#fff !important;
-  border-color:rgba(85,231,255,.42) !important;
-  box-shadow:0 8px 24px rgba(45,194,255,.16),inset 0 1px rgba(255,255,255,.08);
-}
-nav button.active,
-nav button[aria-selected="true"]{
-  color:#06111d !important;
-  background:linear-gradient(135deg,#66ecff,#6687ff) !important;
-  border-color:transparent !important;
-  box-shadow:0 0 24px rgba(78,210,255,.28),0 7px 18px rgba(0,0,0,.25);
-}
-
-/* ===== SCREEN / CARD ===== */
-main, section, .page, .content{
-  max-width:1180px;
-}
-.card,.panel,.box,.section,.stat-card,.item-card,.fish-card{
-  border:1px solid var(--g-line) !important;
-  background:
-    linear-gradient(145deg,rgba(17,38,62,.88),rgba(7,19,34,.9)) !important;
-  border-radius:20px !important;
-  box-shadow:
-    0 16px 45px rgba(0,0,0,.25),
-    inset 0 1px rgba(255,255,255,.06) !important;
-  backdrop-filter:blur(12px);
-  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
-}
-.card:hover,.panel:hover,.stat-card:hover,.item-card:hover,.fish-card:hover{
-  transform:translateY(-3px);
-  border-color:rgba(85,231,255,.4) !important;
-  box-shadow:0 20px 55px rgba(0,0,0,.35),0 0 28px rgba(63,190,255,.07),inset 0 1px rgba(255,255,255,.08) !important;
-}
-
-/* ===== BIG GAME TITLE ===== */
-h1,h2,h3{
-  font-weight:950 !important;
-  letter-spacing:-.045em;
-}
-h2{
-  color:#eafaff;
-  text-shadow:0 0 18px rgba(85,231,255,.15);
-}
-h3{color:#ccecff}
-
-/* ===== BUTTONS = SKILL BUTTONS ===== */
-button,.btn{
-  position:relative;
-  overflow:hidden;
-  border:1px solid rgba(116,211,255,.2) !important;
-  border-radius:13px !important;
-  font-weight:900 !important;
-  letter-spacing:-.02em;
-  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease !important;
-}
-button::after,.btn::after{
-  content:"";
-  position:absolute;
-  top:-80%; left:-80%;
-  width:45%; height:260%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
-  transform:rotate(18deg);
-  transition:.45s;
-}
-button:hover::after,.btn:hover::after{left:130%}
-button:hover,.btn:hover{
-  transform:translateY(-2px);
-  filter:brightness(1.08);
-}
-button:active,.btn:active{transform:translateY(1px) scale(.98)}
-
-button.primary,.btn-primary{
-  background:linear-gradient(135deg,#53e8ff,#5279ff) !important;
-  color:#06121f !important;
-  box-shadow:0 9px 26px rgba(69,180,255,.2) !important;
-}
-button.success,.btn-success{
-  background:linear-gradient(135deg,#48e6a3,#22b9d7) !important;
-}
-button.danger,.btn-danger{
-  background:linear-gradient(135deg,#ff7187,#c94cff) !important;
-}
-button.warning,.btn-warning{
-  background:linear-gradient(135deg,#ffd76a,#ff9d52) !important;
-  color:#241400 !important;
-}
-
-/* ===== INPUTS ===== */
-input,select,textarea{
-  color:#eaf8ff !important;
-  background:rgba(4,15,28,.78) !important;
-  border:1px solid rgba(107,194,236,.2) !important;
-  border-radius:12px !important;
-  box-shadow:inset 0 2px 8px rgba(0,0,0,.18);
-}
-input:focus,select:focus,textarea:focus{
-  outline:none !important;
-  border-color:var(--g-cyan) !important;
-  box-shadow:0 0 0 3px rgba(85,231,255,.1),0 0 22px rgba(85,231,255,.1) !important;
-}
-
-/* ===== STAT HUD ===== */
-.stat-card{
-  position:relative;
-  overflow:hidden;
-}
-.stat-card::before{
-  content:"";
-  position:absolute; inset:0;
-  background:linear-gradient(120deg,rgba(85,231,255,.08),transparent 45%,rgba(154,108,255,.06));
-  pointer-events:none;
-}
-.stat-card strong,.stat-card .value{
-  font-size:1.45em !important;
-  font-weight:950 !important;
-  color:#fff !important;
-}
-
-/* ===== XP / PROGRESS ===== */
-.progress,.progress-bar,.xp-bar{
-  border-radius:999px !important;
-  overflow:hidden;
-  background:rgba(0,0,0,.35) !important;
-}
-.progress-bar,.xp-bar > *, .progress > *{
-  background:linear-gradient(90deg,#3bdcff,#6576ff,#a66cff) !important;
-  box-shadow:0 0 18px rgba(82,207,255,.35);
-  position:relative;
-}
-.progress-bar::after,.xp-bar > *::after{
-  content:"";
-  position:absolute; inset:0;
-  background:linear-gradient(110deg,transparent,rgba(255,255,255,.35),transparent);
-  animation:xpShine 2.3s linear infinite;
-}
-@keyframes xpShine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-
-/* ===== FISHING ACTION AREA ===== */
-#fishing-page, #fishing, [id*="fishing"]{
-  position:relative;
-}
-.fishing-result,.catch-result,#fishing-result{
-  border:1px solid rgba(85,231,255,.28) !important;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(78,213,255,.12),transparent 45%),
-    linear-gradient(145deg,rgba(14,39,62,.92),rgba(6,17,30,.94)) !important;
-  box-shadow:0 0 50px rgba(55,204,255,.09),inset 0 1px rgba(255,255,255,.07) !important;
-}
-
-/* ===== RARITY ===== */
-.rarity-common{filter:none}
-.rarity-uncommon{box-shadow:0 0 18px rgba(72,230,163,.13)}
-.rarity-rare{box-shadow:0 0 24px rgba(77,124,255,.2)}
-.rarity-epic{box-shadow:0 0 28px rgba(154,108,255,.24)}
-.rarity-legendary{
-  box-shadow:0 0 35px rgba(255,215,106,.27);
-  border-color:rgba(255,215,106,.4) !important;
-}
-.rarity-mythic{
-  box-shadow:0 0 42px rgba(255,97,125,.28);
-  border-color:rgba(255,115,160,.45) !important;
-  animation:mythicPulse 1.8s ease-in-out infinite alternate;
-}
-@keyframes mythicPulse{from{filter:brightness(1)}to{filter:brightness(1.14)}}
-
-/* ===== TABLE / LOG ===== */
-table{
-  border-collapse:separate !important;
-  border-spacing:0 7px !important;
-}
-thead th{
-  color:#83dff8 !important;
-  text-transform:uppercase;
-  font-size:.78rem;
-  letter-spacing:.08em;
-}
-tbody tr{
-  background:rgba(13,31,51,.72);
-  transition:.16s ease;
-}
-tbody tr:hover{
-  background:rgba(32,66,96,.76);
-  transform:translateX(2px);
-}
-td,th{border-color:rgba(107,194,236,.1) !important}
-
-/* ===== TOAST / POPUPS ===== */
-.toast,.notification,.alert{
-  border:1px solid rgba(85,231,255,.25) !important;
-  border-radius:15px !important;
-  background:rgba(7,22,39,.94) !important;
-  box-shadow:0 15px 40px rgba(0,0,0,.38),0 0 25px rgba(85,231,255,.08) !important;
-  backdrop-filter:blur(15px);
-}
-
-/* ===== LOGIN ===== */
-#login-page, #signup-page{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-}
-#login-page .card,#signup-page .card,
-.login-card,.signup-card{
-  border-radius:28px !important;
-  padding:34px !important;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(83,232,255,.13),transparent 45%),
-    linear-gradient(145deg,rgba(13,34,57,.94),rgba(5,15,27,.96)) !important;
-  box-shadow:0 30px 90px rgba(0,0,0,.5),0 0 45px rgba(54,196,255,.08) !important;
-}
-
-/* ===== SHOP / GACHA / EQUIPMENT ===== */
-.shop-item,.gacha-item,.equipment-item,.inventory-item{
-  position:relative;
-  overflow:hidden;
-}
-.shop-item::before,.gacha-item::before,.equipment-item::before,.inventory-item::before{
-  content:"";
-  position:absolute; inset:0;
-  background:linear-gradient(125deg,rgba(85,231,255,.06),transparent 40%,rgba(154,108,255,.05));
-  pointer-events:none;
-}
-.price,.cost{
-  color:var(--g-gold) !important;
-  font-weight:950 !important;
-  text-shadow:0 0 12px rgba(255,215,106,.15);
-}
-
-/* ===== ADMIN PANEL ===== */
-#admin-page .card, #admin-page .panel{
-  border-color:rgba(255,177,96,.18) !important;
-}
-#admin-page h2{
-  color:#ffd98a;
-  text-shadow:0 0 18px rgba(255,176,79,.18);
-}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-track{background:#040a12}
-::-webkit-scrollbar-thumb{
-  background:linear-gradient(180deg,#275d78,#334a86);
-  border-radius:999px;
-  border:2px solid #040a12;
-}
-::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#3caecb,#5c6ed0)}
-
-/* ===== MOBILE GAME UI ===== */
-@media(max-width:700px){
-  #game-page > header,#game-page header{
-    top:5px;margin:5px 8px 10px;border-radius:18px;
-  }
-  nav{
-    margin:6px 8px 12px !important;
-    border-radius:15px;
-    display:grid !important;
-    grid-template-columns:repeat(3,1fr);
-    overflow:visible;
-  }
-  nav button{
-    min-width:0;
-    font-size:.76rem !important;
-    padding:9px 5px !important;
-  }
-  .card,.panel,.box,.section,.stat-card,.item-card,.fish-card{
-    border-radius:16px !important;
-  }
-}
-
-/* subtle entrance animation */
-.card,.panel,.stat-card,.item-card,.fish-card{
-  animation:gameIn .38s ease both;
-}
-@keyframes gameIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-</style>
-
-
-<style id="game-background-overhaul">
-/* ===== FULL GAME BACKGROUND ===== */
-body{
-  background:
-    linear-gradient(180deg,rgba(2,10,22,.18),rgba(1,7,15,.62)),
-    radial-gradient(circle at 50% 18%,rgba(55,204,255,.22),transparent 30%),
-    radial-gradient(circle at 12% 65%,rgba(56,95,255,.16),transparent 28%),
-    radial-gradient(circle at 88% 48%,rgba(145,74,255,.13),transparent 30%),
-    linear-gradient(180deg,#071d32 0%,#06253a 42%,#03111e 100%) !important;
-  background-attachment:fixed !important;
-}
-
-/* deep-ocean light rays */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:-2;
-  background:
-    linear-gradient(112deg,transparent 20%,rgba(95,225,255,.055) 31%,transparent 43%),
-    linear-gradient(68deg,transparent 50%,rgba(83,128,255,.045) 61%,transparent 74%);
-  background-size:180% 100%,160% 100%;
-  animation:seaRays 13s ease-in-out infinite alternate;
-}
-
-/* bubbles */
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:-1;
-  opacity:.35;
-  background-image:
-    radial-gradient(circle at 12% 82%,rgba(150,240,255,.5) 0 2px,transparent 3px),
-    radial-gradient(circle at 29% 64%,rgba(150,240,255,.35) 0 3px,transparent 4px),
-    radial-gradient(circle at 74% 78%,rgba(150,240,255,.4) 0 2px,transparent 3px),
-    radial-gradient(circle at 88% 34%,rgba(150,240,255,.35) 0 3px,transparent 4px),
-    radial-gradient(circle at 52% 46%,rgba(150,240,255,.25) 0 2px,transparent 3px);
-  background-size:260px 260px,340px 340px,300px 300px,390px 390px,220px 220px;
-  animation:bubbles 18s linear infinite;
-}
-
-@keyframes seaRays{
-  from{background-position:0 0,100% 0}
-  to{background-position:35% 0,65% 0}
-}
-@keyframes bubbles{
-  from{background-position:0 120px,30px 280px,120px 220px,40px 360px,160px 190px}
-  to{background-position:0 -420px,30px -360px,120px -500px,40px -300px,160px -430px}
-}
-
-/* horizon glow */
-#game-page{
-  position:relative;
-}
-#game-page::before{
-  content:"";
-  position:fixed;
-  left:-10%;
-  right:-10%;
-  bottom:-5%;
-  height:42vh;
-  pointer-events:none;
-  z-index:-1;
-  background:
-    radial-gradient(ellipse at 50% 100%,rgba(38,170,222,.18),transparent 58%),
-    linear-gradient(180deg,transparent,rgba(0,45,68,.3));
-}
-
-/* richer game containers */
-#game-page main{
-  position:relative;
-}
-</style>
-
-
-<style id="summer-theme-overhaul">
-/* ===== SUMMER FESTIVAL THEME ===== */
-:root{
-  --summer-sky:#63dcff;
-  --summer-blue:#168fe8;
-  --summer-deep:#064c88;
-  --summer-mint:#56e5c4;
-  --summer-yellow:#ffe27a;
-  --summer-coral:#ff8b72;
-  --summer-white:#f5fdff;
-}
-
-/* sunny tropical ocean */
-body{
-  background:
-    radial-gradient(circle at 15% 8%,rgba(255,242,157,.28),transparent 18%),
-    radial-gradient(circle at 84% 12%,rgba(255,221,103,.18),transparent 17%),
-    linear-gradient(180deg,#72e6ff 0%,#35bfe9 26%,#087fc5 56%,#034c86 100%) !important;
-  background-attachment:fixed !important;
-}
-
-/* bright sun */
-body::before{
-  content:"";
-  position:fixed;
-  width:360px;height:360px;
-  top:-190px;right:-100px;
-  border-radius:50%;
-  pointer-events:none;
-  z-index:-2;
-  background:radial-gradient(circle,rgba(255,249,185,.95) 0 8%,rgba(255,224,91,.3) 28%,transparent 68%);
-  filter:blur(4px);
-  animation:sunGlow 4s ease-in-out infinite alternate;
-}
-@keyframes sunGlow{
-  from{transform:scale(.96);opacity:.75}
-  to{transform:scale(1.06);opacity:1}
-}
-
-/* summer clouds */
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:-1;
-  opacity:.55;
-  background:
-    radial-gradient(ellipse at 8% 18%,#fff 0 4%,transparent 4.5%),
-    radial-gradient(ellipse at 13% 17%,#fff 0 6%,transparent 6.5%),
-    radial-gradient(ellipse at 19% 19%,#fff 0 4%,transparent 4.5%),
-    radial-gradient(ellipse at 67% 25%,#fff 0 3%,transparent 3.5%),
-    radial-gradient(ellipse at 72% 24%,#fff 0 5%,transparent 5.5%),
-    radial-gradient(ellipse at 78% 26%,#fff 0 3%,transparent 3.5%);
-  filter:blur(5px);
-  animation:cloudMove 28s linear infinite alternate;
-}
-@keyframes cloudMove{
-  from{background-position:0 0,0 0,0 0,0 0,0 0,0 0}
-  to{background-position:90px 0,100px 5px,120px 0,-80px 0,-90px 4px,-110px 0}
-}
-
-/* game panels become beach-glass */
-.card,.panel,.box,.section,.stat-card,.item-card,.fish-card{
-  background:
-    linear-gradient(145deg,rgba(6,91,142,.78),rgba(3,52,94,.84)) !important;
-  border:1px solid rgba(174,241,255,.38) !important;
-  box-shadow:
-    0 14px 40px rgba(0,50,91,.28),
-    inset 0 1px rgba(255,255,255,.2) !important;
-}
-
-/* headers feel like a summer event */
-#game-page > header,
-#game-page header{
-  background:linear-gradient(135deg,rgba(4,94,143,.92),rgba(8,64,111,.9)) !important;
-  border-color:rgba(168,239,255,.4) !important;
-  box-shadow:0 12px 38px rgba(0,54,94,.32),inset 0 1px rgba(255,255,255,.18) !important;
-}
-#game-page header h1{
-  color:#eaffff !important;
-  text-shadow:0 0 18px rgba(111,235,255,.5);
-}
-
-/* summer event navigation */
-nav{
-  background:rgba(3,61,103,.72) !important;
-  border-color:rgba(180,242,255,.32) !important;
-}
-nav button{
-  background:linear-gradient(180deg,rgba(25,135,191,.9),rgba(5,83,139,.9)) !important;
-  color:#dffaff !important;
-  border-color:rgba(172,239,255,.22) !important;
-}
-nav button:hover{
-  background:linear-gradient(135deg,#3ee4ed,#1e9ee8) !important;
-}
-nav button.active,nav button[aria-selected="true"]{
-  background:linear-gradient(135deg,#ffe77d,#55e5dc) !important;
-  color:#06486b !important;
-  box-shadow:0 0 25px rgba(255,226,112,.34) !important;
-}
-
-/* buttons: aqua + tropical yellow */
-button.primary,.btn-primary{
-  background:linear-gradient(135deg,#4ee7e0,#22a9ec) !important;
-  color:#033b59 !important;
-  box-shadow:0 8px 24px rgba(38,220,224,.3) !important;
-}
-button.warning,.btn-warning{
-  background:linear-gradient(135deg,#ffe77b,#ffad5e) !important;
-  color:#5a2b00 !important;
-}
-button.success,.btn-success{
-  background:linear-gradient(135deg,#72f0bf,#28c9b1) !important;
-}
-button.danger,.btn-danger{
-  background:linear-gradient(135deg,#ff927e,#ff668f) !important;
-}
-
-/* inputs */
-input,select,textarea{
-  background:rgba(1,44,76,.7) !important;
-  border-color:rgba(159,234,255,.3) !important;
-}
-input:focus,select:focus,textarea:focus{
-  border-color:#68e9ff !important;
-  box-shadow:0 0 0 3px rgba(104,233,255,.13),0 0 22px rgba(104,233,255,.18) !important;
-}
-
-/* tropical XP */
-.progress-bar,.xp-bar > *, .progress > *{
-  background:linear-gradient(90deg,#65f1dc,#41d4ee,#ffe06c) !important;
-  box-shadow:0 0 18px rgba(74,232,216,.4);
-}
-
-/* summer rarity highlights */
-.rarity-legendary{
-  border-color:rgba(255,226,112,.6) !important;
-  box-shadow:0 0 34px rgba(255,217,88,.3) !important;
-}
-.rarity-mythic{
-  border-color:rgba(255,145,130,.6) !important;
-  box-shadow:0 0 38px rgba(255,123,111,.3) !important;
-}
-
-/* ocean result panel */
-.fishing-result,.catch-result,#fishing-result{
-  background:
-    radial-gradient(circle at 50% 0%,rgba(92,238,255,.24),transparent 45%),
-    linear-gradient(145deg,rgba(8,112,165,.9),rgba(2,54,95,.94)) !important;
-  border-color:rgba(135,241,255,.45) !important;
-}
-
-/* gold summer prices */
-.price,.cost{
-  color:#ffe47b !important;
-  text-shadow:0 0 12px rgba(255,218,91,.3);
-}
-
-/* scrollbar */
-::-webkit-scrollbar-track{background:#03436e}
-::-webkit-scrollbar-thumb{
-  background:linear-gradient(180deg,#59dfe5,#167ec0);
-  border-color:#03436e;
-}
-
-/* mobile */
-@media(max-width:700px){
-  body{
-    background:
-      radial-gradient(circle at 85% 5%,rgba(255,239,126,.24),transparent 18%),
-      linear-gradient(180deg,#67dcfa 0%,#159fd4 35%,#04588e 100%) !important;
-  }
-}
-</style>
-
-
-<style id="summer-festival-animation">
-/* ===== 2026 SUMMER FISHING FESTIVAL ===== */
-#summerFestival{
-  position:relative;
-  overflow:hidden;
-  margin:0 0 20px;
-  min-height:330px;
-  padding:30px;
-  border:2px solid rgba(255,238,133,.55);
-  border-radius:28px;
-  background:
-    linear-gradient(180deg,rgba(54,198,242,.88) 0%,rgba(13,133,193,.92) 54%,rgba(3,72,126,.96) 100%);
-  box-shadow:0 20px 60px rgba(0,58,105,.38),inset 0 2px rgba(255,255,255,.3);
-  isolation:isolate;
-}
-#summerFestival .sun{
-  position:absolute;
-  width:105px;height:105px;
-  right:7%;top:24px;
-  border-radius:50%;
-  background:radial-gradient(circle,#fff9ad 0 25%,#ffe66d 52%,#ffb94d 100%);
-  box-shadow:0 0 25px #fff1a0,0 0 70px rgba(255,218,80,.55);
-  animation:summerSun 4s ease-in-out infinite alternate;
-}
-#summerFestival .sun::before{
-  content:"";
-  position:absolute;inset:-25px;
-  border-radius:50%;
-  background:repeating-conic-gradient(from 0deg,rgba(255,231,105,.28) 0 7deg,transparent 7deg 18deg);
-  animation:sunRays 18s linear infinite;
-}
-#summerFestival .cloud{
-  position:absolute;
-  width:150px;height:42px;
-  border-radius:999px;
-  background:rgba(255,255,255,.86);
-  filter:blur(.3px);
-  opacity:.82;
-  box-shadow:35px 7px 0 -3px rgba(255,255,255,.84),70px 0 0 -9px rgba(255,255,255,.8);
-}
-#summerFestival .cloud.c1{top:52px;left:-190px;animation:cloudFly 24s linear infinite}
-#summerFestival .cloud.c2{top:125px;left:-280px;transform:scale(.72);animation:cloudFly 32s linear 4s infinite}
-#summerFestival .cloud.c3{top:205px;left:-220px;transform:scale(.55);opacity:.55;animation:cloudFly 38s linear 9s infinite}
-
-#summerFestival .wave{
-  position:absolute;
-  left:-5%;right:-5%;bottom:-45px;height:105px;
-  border-radius:50% 50% 0 0;
-  background:rgba(255,255,255,.12);
-  animation:waveMove 5s ease-in-out infinite alternate;
-}
-#summerFestival .wave.w2{
-  bottom:-63px;
-  background:rgba(0,61,112,.3);
-  animation-duration:7s;
-}
-#summerFestival .content{
-  position:relative;
-  z-index:4;
-  max-width:700px;
-}
-#summerFestival .badge{
-  display:inline-block;
-  padding:7px 13px;
-  border-radius:999px;
-  background:rgba(255,229,102,.95);
-  color:#07527b;
-  font-weight:1000;
-  box-shadow:0 5px 18px rgba(255,211,72,.28);
-  animation:badgePop 2s ease-in-out infinite alternate;
-}
-#summerFestival h2{
-  margin:14px 0 6px;
-  font-size:clamp(32px,5vw,58px);
-  color:#fff !important;
-  text-shadow:0 4px 0 rgba(4,80,130,.35),0 0 25px rgba(255,255,255,.2);
-}
-#summerFestival .subtitle{
-  margin:0 0 20px;
-  color:#e9fbff;
-  font-size:1.08rem;
-  font-weight:750;
-}
-#summerFestival .event-rewards{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-#summerFestival .reward{
-  padding:10px 14px;
-  border:1px solid rgba(255,255,255,.25);
-  border-radius:14px;
-  background:rgba(2,62,105,.46);
-  color:#fff;
-  font-weight:850;
-  backdrop-filter:blur(8px);
-}
-#summerFestival .fish{
-  position:absolute;
-  z-index:3;
-  font-size:44px;
-  filter:drop-shadow(0 7px 8px rgba(0,35,65,.25));
-}
-#summerFestival .fish.f1{bottom:70px;left:12%;animation:fishSwim 6s ease-in-out infinite}
-#summerFestival .fish.f2{bottom:112px;right:20%;font-size:32px;animation:fishSwim 7s ease-in-out 1s infinite reverse}
-#summerFestival .fish.f3{bottom:48px;right:8%;font-size:28px;animation:fishSwim 5s ease-in-out 2s infinite}
-
-@keyframes summerSun{from{transform:scale(.96);filter:brightness(1)}to{transform:scale(1.08);filter:brightness(1.12)}}
-@keyframes sunRays{to{transform:rotate(360deg)}}
-@keyframes cloudFly{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 500px))}}
-@keyframes waveMove{from{transform:translateX(-2%) rotate(-1deg)}to{transform:translateX(2%) rotate(1deg)}}
-@keyframes badgePop{from{transform:translateY(0)}to{transform:translateY(-4px)}}
-@keyframes fishSwim{
-  0%,100%{transform:translate(0,0) rotate(-3deg)}
-  50%{transform:translate(28px,-12px) rotate(4deg)}
-}
-@media(max-width:700px){
-  #summerFestival{min-height:360px;padding:22px;border-radius:22px}
-  #summerFestival .sun{width:75px;height:75px;right:5%;top:25px}
-  #summerFestival h2{font-size:34px;padding-top:65px}
-  #summerFestival .subtitle{font-size:.94rem}
-}
-</style>
-
+</body>
 
 <style>
 *{box-sizing:border-box}
@@ -1071,150 +231,7 @@ z-index:9999
 }
 
 </style>
-<style>html,body,#root{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;margin:0;padding:0}html,body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Helvetica Neue,Arial,sans-serif!important}button,input,textarea,select{font-family:inherit}html{background-color:transparent}html.chatgptOled.dark,html.mobileSkybridge.dark{background-color:#000}@supports (font: -apple-system-body){html.mobileSkybridge{font:-apple-system-body}}html.desktopSkybridge.dark{background-color:#1e1e1e}html.desktopSkybridge [data-openai-titlebar]{padding-left:calc(8px + var(--openai-titlebar-left-inset, 0px));padding-right:8px}html.transparentSkybridgeBackground,html.transparentSkybridgeBackground.dark{background-color:transparent}html.androidSkybridge,html.androidSkybridge body,html.androidSkybridge *{-webkit-tap-highlight-color:rgba(255,255,255,0)}html.androidSkybridge *::selection,html.androidSkybridge *::-moz-selection{background:#fff0;color:inherit}</style><style>html,body,#root{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;margin:0;padding:0}html,body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Helvetica Neue,Arial,sans-serif!important}button,input,textarea,select{font-family:inherit}html{background-color:transparent}html.chatgptOled.dark,html.mobileSkybridge.dark{background-color:#000}@supports (font: -apple-system-body){html.mobileSkybridge{font:-apple-system-body}}html.desktopSkybridge.dark{background-color:#1e1e1e}html.desktopSkybridge [data-openai-titlebar]{padding-left:calc(8px + var(--openai-titlebar-left-inset, 0px));padding-right:8px}html.transparentSkybridgeBackground,html.transparentSkybridgeBackground.dark{background-color:transparent}html.androidSkybridge,html.androidSkybridge body,html.androidSkybridge *{-webkit-tap-highlight-color:rgba(255,255,255,0)}html.androidSkybridge *::selection,html.androidSkybridge *::-moz-selection{background:#fff0;color:inherit}</style>
-<style id="summer-event-period-style">
-#summerEventStatus.event-open{
-  background:linear-gradient(135deg,rgba(16,185,129,.34),rgba(14,165,233,.28));
-  border-color:rgba(167,243,208,.55);
-  box-shadow:0 0 24px rgba(34,211,238,.16);
-}
-#summerEventStatus.event-closed{
-  background:linear-gradient(135deg,rgba(71,85,105,.45),rgba(30,41,59,.5));
-  border-color:rgba(203,213,225,.28);
-}
-</style>
-
-<style id="summer-reward-click-style">
-#summerFestival .reward{
-  appearance:none;
-  -webkit-appearance:none;
-  cursor:pointer;
-  font:inherit;
-  text-align:left;
-  transition:transform .16s ease,filter .16s ease,background .16s ease,box-shadow .16s ease;
-}
-#summerFestival .reward:hover{
-  transform:translateY(-2px);
-  filter:brightness(1.12);
-  box-shadow:0 8px 20px rgba(0,0,0,.16);
-}
-#summerFestival .reward:active{
-  transform:translateY(1px) scale(.98);
-}
-.summer-modal-backdrop{
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  background:rgba(0,24,48,.66);
-  backdrop-filter:blur(7px);
-}
-.summer-modal{
-  width:min(560px,94vw);
-  max-height:86vh;
-  overflow:auto;
-  border:1px solid rgba(151,235,255,.38);
-  border-radius:24px;
-  padding:22px;
-  background:linear-gradient(145deg,#063f67,#082d4b);
-  color:#effcff;
-  box-shadow:0 24px 80px rgba(0,0,0,.4);
-}
-.summer-modal h3{margin:0 0 8px;font-size:1.45rem}
-.summer-modal p{margin:6px 0 14px;color:#ccefff}
-.summer-modal-close{
-  float:right;
-  border:0;
-  border-radius:12px;
-  padding:7px 11px;
-  cursor:pointer;
-  background:rgba(255,255,255,.14);
-  color:#fff;
-  font-weight:900;
-}
-.summer-reward-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-  margin-top:14px;
-}
-.summer-reward-card{
-  padding:14px;
-  border-radius:16px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
-}
-.summer-reward-card b{display:block;margin-bottom:5px}
-.summer-rank-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px 14px;
-  margin-top:8px;
-  border-radius:14px;
-  background:rgba(255,255,255,.08);
-}
-.summer-rank-row .rank{font-weight:1000;min-width:42px}
-.summer-rank-row .name{flex:1;font-weight:850}
-.summer-rank-row .score{font-weight:1000;color:#ffe77b}
-@media(max-width:520px){
-  .summer-reward-grid{grid-template-columns:1fr}
-}
-</style>
-
-
-<style id="separate-fishing-ground-style">
-.fishing-ground-box{
-  margin:14px 0;
-  padding:14px;
-  border:1px solid rgba(150,235,255,.22);
-  border-radius:18px;
-  background:rgba(0,44,75,.28);
-}
-.fishing-ground-tabs{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin:10px 0 12px;
-}
-.ground-tab{
-  min-height:48px;
-  border:1px solid rgba(172,239,255,.25);
-  border-radius:14px;
-  cursor:pointer;
-  font:inherit;
-  font-weight:900;
-  color:#dffaff;
-  background:linear-gradient(180deg,rgba(25,135,191,.9),rgba(5,83,139,.9));
-  transition:.16s ease;
-}
-.ground-tab:hover{transform:translateY(-1px);filter:brightness(1.1)}
-.ground-tab.active{
-  color:#06486b;
-  background:linear-gradient(135deg,#ffe77d,#55e5dc);
-  box-shadow:0 0 24px rgba(255,226,112,.24);
-}
-.ground-panel{
-  padding:13px;
-  border-radius:15px;
-  background:rgba(255,255,255,.055);
-}
-.ground-title{font-size:18px;font-weight:1000;margin-bottom:4px}
-.summer-ground-info{
-  margin:10px 0;
-  padding:10px 12px;
-  border-radius:12px;
-  background:rgba(255,225,104,.1);
-  border:1px solid rgba(255,225,104,.18);
-}
-#summerGroundPanel #summerEventStatus{margin-top:8px}
-</style>
-
-</head>
+<style>html,body,#root{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;margin:0;padding:0}html,body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Helvetica Neue,Arial,sans-serif!important}button,input,textarea,select{font-family:inherit}html{background-color:transparent}html.chatgptOled.dark,html.mobileSkybridge.dark{background-color:#000}@supports (font: -apple-system-body){html.mobileSkybridge{font:-apple-system-body}}html.desktopSkybridge.dark{background-color:#1e1e1e}html.desktopSkybridge [data-openai-titlebar]{padding-left:calc(8px + var(--openai-titlebar-left-inset, 0px));padding-right:8px}html.transparentSkybridgeBackground,html.transparentSkybridgeBackground.dark{background-color:transparent}html.androidSkybridge,html.androidSkybridge body,html.androidSkybridge *{-webkit-tap-highlight-color:rgba(255,255,255,0)}html.androidSkybridge *::selection,html.androidSkybridge *::-moz-selection{background:#fff0;color:inherit}</style><style>html,body,#root{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;margin:0;padding:0}html,body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Helvetica Neue,Arial,sans-serif!important}button,input,textarea,select{font-family:inherit}html{background-color:transparent}html.chatgptOled.dark,html.mobileSkybridge.dark{background-color:#000}@supports (font: -apple-system-body){html.mobileSkybridge{font:-apple-system-body}}html.desktopSkybridge.dark{background-color:#1e1e1e}html.desktopSkybridge [data-openai-titlebar]{padding-left:calc(8px + var(--openai-titlebar-left-inset, 0px));padding-right:8px}html.transparentSkybridgeBackground,html.transparentSkybridgeBackground.dark{background-color:transparent}html.androidSkybridge,html.androidSkybridge body,html.androidSkybridge *{-webkit-tap-highlight-color:rgba(255,255,255,0)}html.androidSkybridge *::selection,html.androidSkybridge *::-moz-selection{background:#fff0;color:inherit}</style></head>
 
 <body>
 
@@ -1283,34 +300,7 @@ line-height:1.45;"></textarea>
 </div>
 
 <!-- 게임 -->
-
-<div id="summerModalRoot" style="display:none"></div>
-
 <div id="gamePage" class="container">
-
-<div id="summerFestival">
-  <div class="sun"></div>
-  <div class="cloud c1"></div>
-  <div class="cloud c2"></div>
-  <div class="cloud c3"></div>
-  <div class="fish f1">🐟</div>
-  <div class="fish f2">🐠</div>
-  <div class="fish f3">🐡</div>
-  <div class="wave"></div>
-  <div class="wave w2"></div>
-  <div class="content">
-    <span class="badge">☀️ SEASON EVENT · 2026</span>
-    <h2>🏖️ 2026 여름 낚시축제</h2>
-    <p class="subtitle">뜨거운 태양 아래, 최고의 물고기를 낚아보세요!</p>
-    <div class="event-rewards">
-      <span class="reward">🎣 여름 한정 낚시</span>
-      <span class="reward">🐠 이벤트 물고기</span>
-      <button type="button" class="reward" onclick="openSummerRewardModal()">🎁 한정 보상</button>
-      <button type="button" class="reward" onclick="openSummerRankingModal()">🏆 축제 랭킹</button>
-    </div>
-  </div>
-</div>
-
 
 <div class="card">
 <h1>🎣 낚시왕</h1>
@@ -1338,7 +328,8 @@ line-height:1.45;"></textarea>
 <button onclick="showPage('inventory')">🎒 인벤토리</button>
 <button onclick="showPage('equipment')">🛡️ 장비</button>
 <button onclick="showPage('shop')">🏪 상점</button>
-<button onclick="showPage('specialGachaPage')">📦 고급 보물상자</button>
+<button onclick="showPage('chanceGamePage')">🎲 행운 게임</button>
+<button onclick="showPage('specialGachaPage')">🎁 특별 아이템 뽑기</button>
 <button id="adminNavButton" class="danger hidden" onclick="showPage('admin')">👑 관리자</button>
 <button class="danger" onclick="logout()">로그아웃</button>
 </div>
@@ -1546,44 +537,58 @@ line-height:1.45;"></textarea>
 </select>
 </div>
 
+<div>
+<label>낚시터</label>
+<select id="locationSelect" onchange="changeLocation()">
 
-<div class="fishing-ground-box">
-  <label>🎣 낚시터 선택</label>
-  <div class="fishing-ground-tabs">
-    <button type="button" id="normalGroundBtn" class="ground-tab active" onclick="setFishingGround('normal')">
-      🌊 일반 낚시터
-    </button>
-    <button type="button" id="summerGroundBtn" class="ground-tab" onclick="setFishingGround('summer')">
-      ☀️ 여름축제 낚시터
-    </button>
-  </div>
+<option value="sea">
+평범한 바다
+</option>
 
-  <div id="normalGroundPanel" class="ground-panel">
-    <div class="ground-title">🌊 일반 낚시터</div>
-    <p class="small">기존 일반 물고기만 등장합니다. 여름축제 물고기는 등장하지 않습니다.</p>
-    <select id="locationSelect" onchange="changeLocation()">
-      <option value="sea">평범한 바다</option>
-      <option value="deep">심해</option>
-      <option value="dimension">차원 바다</option>
-      <option value="ice">얼음 바다</option>
-      <option value="volcano">용암 바다</option>
-      <option value="space">우주 바다</option>
-      <option value="cosmic">🌌 우주 심연</option>
-      <option value="void" selected>🕳️ 공허의 바다</option>
-    </select>
-  </div>
 
-  <div id="summerGroundPanel" class="ground-panel hidden">
-    <div class="ground-title">☀️ 2026 여름축제 낚시터</div>
-    <p class="small">이곳에서는 여름한정 물고기만 노릴 수 있습니다.</p>
-    <div class="summer-ground-info">
-      🐠 이벤트 물고기 50종 · 🎯 이벤트 시도 1.5% · 📅 9/13 12:30 시작
-    </div>
-    <div id="summerEventStatus" class="event-closed">🔒 여름한정 낚시 준비 중</div>
-    <div id="summerEventCountdown" class="small">이벤트 시작 시간을 확인 중...</div>
-  </div>
+
+<option value="deep">
+심해
+</option>
+
+
+
+<option value="dimension">
+차원 바다
+</option>
+
+
+
+<option value="ice">
+얼음 바다
+</option>
+
+
+
+<option value="volcano">
+용암 바다
+</option>
+
+
+
+<option value="space">
+우주 바다
+</option>
+
+
+
+<option value="cosmic">
+🌌 우주 심연
+</option>
+
+
+
+<option value="void" selected="">
+🕳️ 공허의 바다
+</option>
+
+</select>
 </div>
-
 
 <div>
 <label>미끼</label>
@@ -12356,29 +11361,138 @@ x1
 </section>
 
 
-
-
-<!-- 📦 고급 보물상자 -->
+<!-- 🎁 특별 아이템 뽑기 -->
 <section id="specialGachaPage" class="page hidden">
+<div class="card">
+<h2>🎁 특별 아이템 뽑기</h2>
+<p class="small">낚시로는 나오지 않는 특별 아이템 20종을 뽑을 수 있습니다. 높은 등급일수록 확률이 낮습니다.</p>
+
+<div id="specialGachaResult" class="fish-result" style="min-height:150px;">
+<div class="big">🎁</div>
+<p>뽑기 버튼을 눌러보세요!</p>
+</div>
+
+<div class="grid">
+<div class="stat center"><b>🎁 1회 뽑기</b><br>💰 1,000,000 코인</div>
+<div class="stat center"><b>🎁 10회 뽑기</b><br>💰 9,000,000 코인</div>
+</div>
+
+<div class="grid" style="margin-top:12px;">
+<div class="stat center">10~12등급<br><b>50%</b></div>
+<div class="stat center">13~15등급<br><b>30%</b></div>
+<div class="stat center">16~17등급<br><b>12%</b></div>
+<div class="stat center">18등급<br><b>5%</b></div>
+<div class="stat center">19등급<br><b>2.5%</b></div>
+<div class="stat center">20등급<br><b>0.5%</b></div>
+</div>
+
+<button class="primary" style="width:100%;margin-top:12px;" onclick="specialGacha(1)">🎁 1회 뽑기</button>
+<button class="warning" style="width:100%;" onclick="specialGacha(10)">🎁 10회 뽑기</button>
+<div id="specialGachaHistory" class="small" style="margin-top:12px;"></div>
 <div class="card" style="margin-top:15px;">
 <h3>📦 고급 보물상자</h3>
 <div id="specialBoxCooldown" class="small" style="margin:8px 0;font-weight:700">✅ 뽑기 가능</div>
-<p class="small">상자별로 설정된 등급 확률에 따라 특별 아이템을 뽑습니다. 30등급은 <b>오직 1개 아이템</b>만 존재합니다.</p>
+<p class="small">상자별로 설정된 등급 확률에 따라 특별 아이템을 뽑습니다. 39·40등급은 각각 <b>오직 1개 아이템</b>만 존재합니다.</p>
 <div class="grid">
-<button class="primary" onclick="openSpecialBox('1T')">📦 1조 상자<br><span class="small">500,000,000 코인</span></button>
-<button class="primary" onclick="openSpecialBox('10T')">💎 10조 상자<br><span class="small">5,000,000,000 코인</span></button>
-<button class="warning" onclick="openSpecialBox('100T')">👑 100조 상자<br><span class="small">50,000,000,000 코인</span></button>
-<button class="warning" onclick="openSpecialBox('1000T')">🔷 1,000조 상자<br><span class="small">500,000,000,000 코인</span></button>
-<button class="danger" onclick="openSpecialBox('1E')">🎁 1경 상자<br><span class="small">5,000,000,000,000 코인</span></button>
-<button class="danger" onclick="openSpecialBox('10E')">💎 10경 상자<br><span class="small">50,000,000,000,000 코인</span></button>
-<button class="danger" onclick="openSpecialBox('100E')">👑 100경 상자<br><span class="small">500,000,000,000,000 코인</span></button>
-<button class="danger" onclick="openSpecialBox('1000E')">🌌 1,000경 상자<br><span class="small">5,000,000,000,000,000 코인</span></button>
-<button class="danger" onclick="openSpecialBox('1H')">🔥 1해 상자<br><span class="small">50,000,000,000,000,000,000 코인</span></button>
+<button class="primary" onclick="openSpecialBox('1T')">📦 1조 상자<br><span class="small">3,000억</span></button>
+<button class="primary" onclick="openSpecialBox('10T')">💎 10조 상자<br><span class="small">3조</span></button>
+<button class="warning" onclick="openSpecialBox('100T')">👑 100조 상자<br><span class="small">30조</span></button>
+<button class="warning" onclick="openSpecialBox('1000T')">🔷 1,000조 상자<br><span class="small">300조</span></button>
+<button class="danger" onclick="openSpecialBox('1E')">🎁 1경 상자<br><span class="small">3,000조</span></button>
+<button class="danger" onclick="openSpecialBox('10E')">💎 10경 상자<br><span class="small">3경</span></button>
+<button class="danger" onclick="openSpecialBox('100E')">👑 100경 상자<br><span class="small">30경</span></button>
+<button class="danger" onclick="openSpecialBox('1000E')">🔷 1,000경 상자<br><span class="small">300경</span></button>
+<button class="danger" onclick="openSpecialBox('1H')">🌌 1해 상자<br><span class="small">3,000경</span></button>
+<button class="danger" onclick="openSpecialBox('10H')">💎 10해 상자<br><span class="small">3만경</span></button>
+<button class="danger" onclick="openSpecialBox('100H')">👑 100해 상자<br><span class="small">30만경</span></button>
+<button class="danger" onclick="openSpecialBox('1000H')">🔷 1,000해 상자<br><span class="small">300만경</span></button>
 </div>
 <div id="specialBoxResult" class="small" style="margin-top:12px;"></div>
 <div class="small" style="margin-top:12px;">※ 입력하신 확률 합계가 100%가 아닌 상자는 전체 합계를 기준으로 자동 정규화하여 적용합니다.</div>
 </div></div>
+
+</div>
 </section>
+
+<!-- 🎲 무료 행운 게임 -->
+<section id="chanceGamePage" class="page hidden">
+
+<div class="card">
+<h2>🎲 무료 행운 게임</h2>
+
+<p class="small">
+코인을 사용하지 않는 무료 미니게임입니다.<br>
+결과에 따라 실제 게임 경험치(EXP)를 획득합니다.
+</p>
+
+<div id="chanceResult" style="
+text-align:center;
+font-size:30px;
+font-weight:bold;
+padding:25px 10px;
+margin:15px 0;
+background:#16263d;
+border-radius:15px;">🟠 20배</div>
+
+<div class="grid">
+
+<div class="stat center">
+🟢 1.5배<br>
+<b>45%</b>
+</div>
+
+<div class="stat center">
+🔵 6배<br>
+<b>25%</b>
+</div>
+
+<div class="stat center">
+🟣 12배<br>
+<b>15%</b>
+</div>
+
+<div class="stat center">
+🟠 20배<br>
+<b>8%</b>
+</div>
+
+<div class="stat center">
+🔴 28배<br>
+<b>4%</b>
+</div>
+
+<div class="stat center">
+🟡 40배<br>
+<b>2%</b>
+</div>
+
+<div class="stat center">
+💎 70배<br>
+<b>0.9%</b>
+</div>
+
+<div class="stat center">
+👑 100배<br>
+<b>0.1%</b>
+</div>
+
+</div>
+
+<p class="center">
+📈 이번 결과 EXP:
+<b id="chanceExpGain">0</b>
+</p>
+
+<p class="center">
+⭐ 현재 EXP:
+<b id="chanceCurrentExp">0</b>
+</p>
+
+<button id="chanceButton" class="primary" style="width:100%;" onclick="playChanceGame()" disabled="">🎲 결과 계산 중...</button>
+</div>
+
+</section>
+
 
 <script>
 
@@ -12981,7 +12095,17 @@ const specialItems=[
   ["💠 궁극신의 수정",27,300000000000,"luck",2500000,"exp",1800000],
   ["🌀 전지전능의 나침반",28,800000000000,"rare",5000000,"item",4000000],
   ["☀️ 초월신의 바늘",29,2000000000000,"luck",10000000,"rare",8000000],
-  ["🌟 경지의 신성한 보물",30,10000000000000,"luck",50000000,"rare",50000000]
+  ["🌟 경지의 신성한 보물",30,10000000000000,"luck",50000000,"rare",50000000],
+  ["🌌 초차원의 성운 보물",31,30000000000000,"luck",80000000,"item",70000000],
+  ["💫 무한우주의 심장",32,80000000000000,"rare",120000000,"exp",90000000],
+  ["👑 신들의 황금왕관",33,200000000000000,"luck",180000000,"sell",150000000],
+  ["🌀 시공간의 보물상자",34,500000000000000,"item",300000000,"rare",250000000],
+  ["☄️ 초신성의 낚시표",35,1000000000000000,"rare",500000000,"luck",400000000],
+  ["💠 창조의 핵",36,3000000000000000,"luck",800000000,"exp",600000000],
+  ["🌠 절대차원의 지도",37,8000000000000000,"item",1200000000,"rare",1000000000],
+  ["♾️ 무한신의 유산",38,20000000000000000,"luck",2000000000,"item",1800000000],
+  ["👁️ 최후의 절대보물",39,50000000000000000,"rare",5000000000,"luck",4500000000],
+  ["✨ 해의 창조신 보물",40,100000000000000000,"luck",10000000000,"rare",10000000000]
 ];
 
 for(const s of specialItems){
@@ -12997,9 +12121,9 @@ for(const s of specialItems){
 
 /* 데이터 수량/등급 안전장치 */
 if(fishNames.length!==2000){ console.warn("물고기 데이터 오류:",fishNames.length); }
-if(items.length!==1980){ console.warn("아이템 데이터 오류:",items.length); }
+if(items.length!==1990){ console.warn("아이템 데이터 오류:",items.length); }
 for(const f of fish){ if(!rarity[f.tier-1]) f.tier=20; }
-for(const item of items){ if(!rarity[item.tier-1]) item.tier=20; }
+for(const item of items){ if(!item.special && !rarity[item.tier-1]) item.tier=20; }
 
 /* ==============================
 낚싯대
@@ -13674,42 +12798,48 @@ function specialGacha(count){
 ============================== */
 const SPECIAL_BOX_CONFIGS={
   "1T":{
-    name:"📦 3조 상자",cost:500000000,
+    name:"📦 1조 상자",cost:3e11,
     weights:{"10-12":65,"13-15":25,16:4,17:2,18:1.5,19:1,20:.4,21:.25,22:.2,23:.15,24:.1,25:.08,26:.06,27:.04,28:.03,29:.02,30:.02}
   },
   "10T":{
-    name:"💎 30조 상자",cost:5000000000,
+    name:"💎 10조 상자",cost:3e12,
     weights:{"10-12":50,"13-15":30,16:7,17:5,18:3,19:2,20:1.5,21:.7,22:.4,23:.25,24:.15,25:.1,26:.08,27:.05,28:.03,29:.02,30:.02}
   },
   "100T":{
-    name:"👑 300조 상자",cost:50000000000,
+    name:"👑 100조 상자",cost:3e13,
     weights:{"10-12":35,"13-15":35,16:10,17:8,18:5,19:3,20:2,21:.7,22:.5,23:.35,24:.25,25:.15,26:.12,27:.08,28:.05,29:.03,30:.02}
   },
   "1000T":{
-    name:"🔷 3,000조 상자",cost:500000000000,
+    name:"🔷 1,000조 상자",cost:3e14,
     weights:{"10-12":20,"13-15":30,16:12,17:10,18:7,19:5,20:4,21:2.5,22:1.5,23:1,24:.7,25:.5,26:.3,27:.2,28:.1,29:.05,30:.05}
   },
   "1E":{
-    name:"🎁 1경 상자",cost:5000000000000,
+    name:"🎁 1경 상자",cost:3e15,
     weights:{"10-12":10,"13-15":25,16:15,17:12,18:10,19:8,20:6,21:4,22:3,23:2,24:1.5,25:1,26:.7,27:.5,28:.35,29:.2,30:.05}
   },
   "10E":{
-    name:"💎 10경 상자",cost:50000000000000,
-    weights:{"10-12":5,"13-15":15,16:14,17:12,18:11,19:10,20:8,21:6,22:5,23:4,24:3,25:2.5,26:1.8,27:1.2,28:.8,29:.5,30:.2}
+    name:"💎 10경 상자",cost:3e16,
+    weights:{"10-12":4,"13-15":10,16:10,17:9,18:8,19:7,20:6,21:5,22:4.5,23:4,24:3.5,25:3,26:2.5,27:2,28:1.5,29:1.2,30:1,31:0.8,32:0.6,33:0.45,34:0.3,35:0.2,36:0.12,37:0.08,38:0.04,39:0.02,40:0.01}
   },
   "100E":{
-    name:"👑 100경 상자",cost:500000000000000,
-    weights:{"10-12":2,"13-15":8,16:10,17:11,18:11,19:11,20:10,21:8,22:7,23:5.5,24:4,25:3,26:2.5,27:1.5,28:1,29:.7,30:.3}
+    name:"👑 100경 상자",cost:3e17,
+    weights:{"10-12":2,"13-15":5,16:7,17:7,18:7,19:6,20:6,21:6,22:5,23:5,24:4.5,25:4,26:3.5,27:3,28:2.5,29:2,30:1.7,31:1.4,32:1.1,33:0.9,34:0.7,35:0.5,36:0.35,37:0.2,38:0.1,39:0.04,40:0.02}
   },
   "1000E":{
-    name:"🌌 1,000경 상자",cost:5000000000000000,
-    weights:{"10-12":1,"13-15":4,16:7,17:9,18:10,19:11,20:11,21:10,22:9,23:7,24:5.5,25:4,26:3,27:2,28:1.5,29:1,30:.5}
+    name:"🔷 1,000경 상자",cost:3e18,
+    weights:{"10-12":1,"13-15":3,16:5,17:5,18:5,19:5,20:5,21:5,22:5,23:5,24:4.5,25:4,26:3.5,27:3,28:2.5,29:2.2,30:2,31:1.8,32:1.6,33:1.4,34:1.2,35:1,36:0.8,37:0.6,38:0.35,39:0.15,40:0.05}
   },
   "1H":{
-    name:"🔥 1해 상자",cost:50000000000000000000,
-    weights:{"10-12":0.5,"13-15":2,"16":5,"17":7,"18":9,"19":11,"20":12,"21":11,"22":10,"23":8,"24":6,"25":4.5,"26":3,"27":2,"28":1.2,"29":0.8,"30":0.5}
+    name:"🌌 1해 상자",cost:3e19,
+    weights:{"10-12":0.5,"13-15":1.5,16:2,17:2.5,18:3,19:3.5,20:4,21:4.5,22:5,23:5,24:5,25:5,26:5,27:5,28:5,29:5,30:5,31:5,32:5,33:5,34:5,35:4.5,36:4,37:3,38:2,39:0.5,40:0.1}
   }
 };
+
+// 1해 / 10해 / 100해 / 1,000해 상자
+const HAE_WEIGHTS = SPECIAL_BOX_CONFIGS["1H"].weights;
+SPECIAL_BOX_CONFIGS["10H"]={name:"💎 10해 상자",cost:3e20,weights:{...HAE_WEIGHTS}};
+SPECIAL_BOX_CONFIGS["100H"]={name:"👑 100해 상자",cost:3e21,weights:{...HAE_WEIGHTS}};
+SPECIAL_BOX_CONFIGS["1000H"]={name:"🔷 1,000해 상자",cost:3e22,weights:{...HAE_WEIGHTS}};
 
 function weightedPick(entries){
   const total=entries.reduce((sum,x)=>sum+x.weight,0);
@@ -13744,18 +12874,14 @@ function openSpecialBox(boxId){
   if(!currentUser) return;
   const config=SPECIAL_BOX_CONFIGS[boxId];
   if(!config) return;
-  const cost=Number(config.cost);
-  if(!Number.isFinite(cost) || cost<=0){toast("상자 가격 설정이 잘못되었습니다.");return;}
-  if(Number(currentUser.coins||0) < cost){toast(`코인이 부족합니다. ${cost.toLocaleString()} 코인이 필요합니다.`);return;}
   const remaining=specialBoxCooldownUntil-Date.now();
   if(remaining>0){toast(`⏳ 쿨타임이 남았습니다. ${(remaining/1000).toFixed(1)}초 후 다시 뽑을 수 있습니다.`);return;}
-  const pool=items.filter(x=>x.special && x.tier>=10 && x.tier<=30);
+  const pool=items.filter(x=>x.special && x.tier>=10 && x.tier<=40);
   if(!pool.length){toast("상자 아이템이 없습니다.");return;}
   const tier=getSpecialBoxTier(config);
   const tierPool=pool.filter(x=>x.tier===tier);
   if(!tierPool.length){toast(`${tier}등급 아이템이 아직 없습니다.`);return;}
 
-  currentUser.coins-=cost;
   specialBoxCooldownUntil=Date.now()+SPECIAL_BOX_COOLDOWN;
   updateSpecialBoxCooldown();
   if(!specialBoxCooldownTimer) specialBoxCooldownTimer=setInterval(updateSpecialBoxCooldown,100);
@@ -13770,86 +12896,9 @@ function openSpecialBox(boxId){
   renderAll();
   toast(`📦 ${config.name} 개봉! ${picked.name}`);
 }
-
-
 /* ==============================
 페이지페이지
 ============================== */
-
-
-/* ==============================
-   ☀️ 여름축제 보상 / 랭킹 팝업
-============================== */
-function closeSummerModal(){
-  const root=document.getElementById("summerModalRoot");
-  if(root){
-    root.style.display="none";
-    root.innerHTML="";
-  }
-}
-
-function openSummerRewardModal(){
-  const root=document.getElementById("summerModalRoot");
-  if(!root) return;
-  root.innerHTML=`
-    <div class="summer-modal-backdrop" onclick="if(event.target===this)closeSummerModal()">
-      <div class="summer-modal" role="dialog" aria-modal="true" aria-label="한정 보상">
-        <button type="button" class="summer-modal-close" onclick="closeSummerModal()">✕</button>
-        <h3>🎁 여름축제 한정 보상</h3>
-        <p>2026 여름 낚시축제 기간에 받을 수 있는 이벤트 보상입니다.</p>
-        <div class="summer-reward-grid">
-          <div class="summer-reward-card"><b>🐠 이벤트 물고기</b>총 50종의 여름 한정 물고기</div>
-          <div class="summer-reward-card"><b>💰 판매 가격</b>최소 100억 ~ 최대 5,000억 코인</div>
-          <div class="summer-reward-card"><b>🎯 이벤트 등장</b>이벤트 시도 확률 1.5%</div>
-          <div class="summer-reward-card"><b>📅 이벤트 기간</b>2026.09.13 12:30 ~ 2026.11.01 23:59</div>
-        </div>
-      </div>
-    </div>`;
-  root.style.display="block";
-}
-
-function openSummerRankingModal(){
-  const root=document.getElementById("summerModalRoot");
-  if(!root) return;
-
-  const usersRaw=localStorage.getItem("users");
-  let users=[];
-  try{
-    const parsed=JSON.parse(usersRaw||"[]");
-    users=Array.isArray(parsed)?parsed:[];
-  }catch(e){ users=[]; }
-
-  if(currentUser && !users.some(u=>u.id===currentUser.id)) users=[...users,currentUser];
-
-  users.sort((a,b)=>
-    (Number(b.totalFishCaught)||0)-(Number(a.totalFishCaught)||0) ||
-    (Number(b.level)||0)-(Number(a.level)||0) ||
-    (Number(b.coins)||0)-(Number(a.coins)||0)
-  );
-
-  const rows=users.slice(0,10).map((u,i)=>`
-    <div class="summer-rank-row">
-      <span class="rank">${i+1}위</span>
-      <span class="name">${String(u.nickname||u.nick||u.id||"알 수 없음").replace(/[<>&"]/g,m=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[m]))}</span>
-      <span class="score">${Number(u.totalFishCaught||0).toLocaleString()}마리</span>
-    </div>
-  `).join("");
-
-  root.innerHTML=`
-    <div class="summer-modal-backdrop" onclick="if(event.target===this)closeSummerModal()">
-      <div class="summer-modal" role="dialog" aria-modal="true" aria-label="축제 랭킹">
-        <button type="button" class="summer-modal-close" onclick="closeSummerModal()">✕</button>
-        <h3>🏆 축제 랭킹</h3>
-        <p>현재 저장된 계정의 총 낚은 물고기 수를 기준으로 표시합니다.</p>
-        ${rows || '<div class="summer-rank-row"><span class="name">아직 랭킹 데이터가 없습니다.</span></div>'}
-      </div>
-    </div>`;
-  root.style.display="block";
-}
-
-document.addEventListener("keydown",function(e){
-  if(e.key==="Escape") closeSummerModal();
-});
 
 function showPage(id){
 
@@ -13908,46 +12957,6 @@ currentUser.itemStats=stats;
 
 return stats;
 
-}
-
-
-// ================================
-// 🎣 낚시 보상 지급
-// ================================
-function giveFishingReward(fish) {
-    if (!currentUser || !fish) return 0;
-
-    const price = Number(fish.price);
-
-    if (!Number.isFinite(price) || price <= 0) {
-        return 0;
-    }
-
-    // 🎣 낚시 코인도 5배
-    const reward = addCoins(price);
-
-    console.log(
-        `🎣 ${fish.name || "물고기"} 획득! 기본 ${price} → 실제 지급 ${reward}`
-    );
-
-    return reward;
-}
-
-
-
-
-
-function renderOwnerCoinMultiplier(){
-  const box=document.getElementById("ownerCoinMultiplierBox");
-  if(!box) return;
-  if(!isOwner()){ box.innerHTML="<p class=\"small\">🔒 소유자 전용 기능입니다.</p>"; return; }
-  box.innerHTML=`<div style="font-size:22px;font-weight:700;margin-bottom:10px;">💰 현재 코인 배수: ${ownerCoinMultiplier}배</div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <button class="primary" onclick="setOwnerCoinMultiplier(2)">💰 2배</button>
-    <button class="primary" onclick="setOwnerCoinMultiplier(4)">💰 4배</button>
-    <button class="primary" onclick="setOwnerCoinMultiplier(8)">💰 8배</button>
-    <button class="warning" onclick="setOwnerCoinMultiplier(1)">❌ 해제</button>
-  </div>`;
 }
 
 function getTotalStats(){
@@ -14029,7 +13038,7 @@ expRequired();
 
 currentUser.level++;
 
-addCoins(500);
+currentUser.coins+=500;
 
 toast(
 "🎉 레벨 업! Lv."+
@@ -14170,251 +13179,79 @@ return fish[0];
 낚시
 ============================== */
 
-
-// ========================================
-// ☀️ 2026 여름한정 낚시 이벤트 기간
-// 2026-09-13 12:30:00 ~ 2026-11-01 23:59:59 (브라우저 현지시간)
-// ========================================
-const SUMMER_FISHING_START = new Date(2026, 8, 13, 12, 30, 0, 0);
-const SUMMER_FISHING_END   = new Date(2026, 10, 1, 23, 59, 59, 999);
-
-function isSummerFishingOpen(now = new Date()){
-  return now >= SUMMER_FISHING_START && now <= SUMMER_FISHING_END;
-}
-
-function getSummerFishingStatus(){
-  const now = new Date();
-
-  if(now < SUMMER_FISHING_START){
-    return {
-      open:false,
-      title:"🔒 여름한정 낚시 준비 중",
-      detail:`${formatSummerDate(SUMMER_FISHING_START)}부터 시작합니다.`,
-      target:SUMMER_FISHING_START
-    };
-  }
-
-  if(now > SUMMER_FISHING_END){
-    return {
-      open:false,
-      title:"🌙 여름한정 낚시 종료",
-      detail:`이벤트는 ${formatSummerDate(SUMMER_FISHING_END)}에 종료되었습니다.`,
-      target:null
-    };
-  }
-
-  return {
-    open:true,
-    title:"🎣 여름한정 낚시 진행 중!",
-    detail:`기간: ${formatSummerDate(SUMMER_FISHING_START)} ~ ${formatSummerDate(SUMMER_FISHING_END)}`,
-    target:SUMMER_FISHING_END
-  };
-}
-
-function formatSummerDate(date){
-  const y=date.getFullYear();
-  const m=String(date.getMonth()+1).padStart(2,"0");
-  const d=String(date.getDate()).padStart(2,"0");
-  const hh=String(date.getHours()).padStart(2,"0");
-  const mm=String(date.getMinutes()).padStart(2,"0");
-  return `${y}.${m}.${d} ${hh}:${mm}`;
-}
-
-function updateSummerFishingEventUI(){
-  const statusEl=document.getElementById("summerEventStatus");
-  const countdownEl=document.getElementById("summerEventCountdown");
-  if(!statusEl || !countdownEl) return;
-
-  const status=getSummerFishingStatus();
-
-  statusEl.textContent=status.title;
-  statusEl.classList.toggle("event-open",status.open);
-  statusEl.classList.toggle("event-closed",!status.open);
-
-  if(status.open){
-    const remain=Math.max(0,status.target-Date.now());
-    const totalSec=Math.floor(remain/1000);
-    const days=Math.floor(totalSec/86400);
-    const hours=Math.floor((totalSec%86400)/3600);
-    const mins=Math.floor((totalSec%3600)/60);
-    const secs=totalSec%60;
-    countdownEl.textContent=
-      `⏰ 종료까지 ${days}일 ${String(hours).padStart(2,"0")}:${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
-  }else{
-    countdownEl.textContent=status.detail;
-  }
-}
-
-// 이벤트가 끝난 뒤 자동 낚시가 계속 돌지 않도록 안전하게 정지
-function enforceSummerFishingPeriod(){
-  if(!isSummerFishingOpen() && autoFishing){
-    autoFishing=false;
-    if(autoTimer){
-      clearInterval(autoTimer);
-      autoTimer=null;
-    }
-    updateAutoStatus();
-    toast("🌙 여름한정 낚시 이벤트가 종료되어 자동 낚시가 중지되었습니다.");
-  }
-}
-
-setInterval(()=>{
-  updateSummerFishingEventUI();
-  enforceSummerFishingPeriod();
-},1000);
-
-document.addEventListener("DOMContentLoaded",()=>{
-  setFishingGround("normal");
-  updateSummerFishingEventUI();
-});
-
-
-
-// ☀️ 2026 여름한정 이벤트 물고기 50종
-const summerEventFish = [{"id": "summer2026_01", "name": "태양빛 황금참치", "rarity": "☀️ 2026 여름한정", "tier": 8, "price": 10000000000, "summerEvent": true}, {"id": "summer2026_02", "name": "여름빛 청새치", "rarity": "☀️ 2026 여름한정", "tier": 8, "price": 11000000000, "summerEvent": true}, {"id": "summer2026_03", "name": "선셋 거대돔", "rarity": "☀️ 2026 여름한정", "tier": 8, "price": 12000000000, "summerEvent": true}, {"id": "summer2026_04", "name": "파도왕 참돔", "rarity": "☀️ 2026 여름한정", "tier": 9, "price": 13000000000, "summerEvent": true}, {"id": "summer2026_05", "name": "코발트 고래치", "rarity": "☀️ 2026 여름한정", "tier": 9, "price": 14000000000, "summerEvent": true}, {"id": "summer2026_06", "name": "하와이안 황새치", "rarity": "☀️ 2026 여름한정", "tier": 9, "price": 15000000000, "summerEvent": true}, {"id": "summer2026_07", "name": "열대 폭군상어", "rarity": "☀️ 2026 여름한정", "tier": 10, "price": 16000000000, "summerEvent": true}, {"id": "summer2026_08", "name": "선샤인 만타", "rarity": "☀️ 2026 여름한정", "tier": 10, "price": 17000000000, "summerEvent": true}, {"id": "summer2026_09", "name": "오션 크라켄피시", "rarity": "☀️ 2026 여름한정", "tier": 10, "price": 18000000000, "summerEvent": true}, {"id": "summer2026_10", "name": "블루문 대왕오징어", "rarity": "☀️ 2026 여름한정", "tier": 11, "price": 19000000000, "summerEvent": true}, {"id": "summer2026_11", "name": "골든웨이브 상어", "rarity": "☀️ 2026 여름한정", "tier": 11, "price": 20000000000, "summerEvent": true}, {"id": "summer2026_12", "name": "트로피컬 용어", "rarity": "☀️ 2026 여름한정", "tier": 11, "price": 22000000000, "summerEvent": true}, {"id": "summer2026_13", "name": "야자수 복어", "rarity": "☀️ 2026 여름한정", "tier": 12, "price": 24000000000, "summerEvent": true}, {"id": "summer2026_14", "name": "썬더 바다뱀장어", "rarity": "☀️ 2026 여름한정", "tier": 12, "price": 26000000000, "summerEvent": true}, {"id": "summer2026_15", "name": "코랄 황금가오리", "rarity": "☀️ 2026 여름한정", "tier": 12, "price": 28000000000, "summerEvent": true}, {"id": "summer2026_16", "name": "아쿠아 제왕복어", "rarity": "☀️ 2026 여름한정", "tier": 13, "price": 30000000000, "summerEvent": true}, {"id": "summer2026_17", "name": "태풍 참치", "rarity": "☀️ 2026 여름한정", "tier": 13, "price": 32000000000, "summerEvent": true}, {"id": "summer2026_18", "name": "무지개 돛새치", "rarity": "☀️ 2026 여름한정", "tier": 13, "price": 35000000000, "summerEvent": true}, {"id": "summer2026_19", "name": "여름혜성 날치", "rarity": "☀️ 2026 여름한정", "tier": 14, "price": 38000000000, "summerEvent": true}, {"id": "summer2026_20", "name": "파라다이스 대구", "rarity": "☀️ 2026 여름한정", "tier": 14, "price": 40000000000, "summerEvent": true}, {"id": "summer2026_21", "name": "에메랄드 바다거북어", "rarity": "☀️ 2026 여름한정", "tier": 14, "price": 45000000000, "summerEvent": true}, {"id": "summer2026_22", "name": "사파이어 심해돔", "rarity": "☀️ 2026 여름한정", "tier": 15, "price": 50000000000, "summerEvent": true}, {"id": "summer2026_23", "name": "루비 산호어", "rarity": "☀️ 2026 여름한정", "tier": 15, "price": 55000000000, "summerEvent": true}, {"id": "summer2026_24", "name": "아쿠아마린 왕연어", "rarity": "☀️ 2026 여름한정", "tier": 15, "price": 60000000000, "summerEvent": true}, {"id": "summer2026_25", "name": "선셋 불꽃복어", "rarity": "☀️ 2026 여름한정", "tier": 16, "price": 70000000000, "summerEvent": true}, {"id": "summer2026_26", "name": "골든코랄 참치", "rarity": "☀️ 2026 여름한정", "tier": 16, "price": 80000000000, "summerEvent": true}, {"id": "summer2026_27", "name": "태양폭발 황새치", "rarity": "☀️ 2026 여름한정", "tier": 16, "price": 90000000000, "summerEvent": true}, {"id": "summer2026_28", "name": "블루홀 제왕어", "rarity": "☀️ 2026 여름한정", "tier": 17, "price": 100000000000, "summerEvent": true}, {"id": "summer2026_29", "name": "오로라 청상아리", "rarity": "☀️ 2026 여름한정", "tier": 17, "price": 110000000000, "summerEvent": true}, {"id": "summer2026_30", "name": "썸머 스타피시", "rarity": "☀️ 2026 여름한정", "tier": 17, "price": 120000000000, "summerEvent": true}, {"id": "summer2026_31", "name": "레몬선샤인 가오리", "rarity": "☀️ 2026 여름한정", "tier": 18, "price": 135000000000, "summerEvent": true}, {"id": "summer2026_32", "name": "코발트 제왕상어", "rarity": "☀️ 2026 여름한정", "tier": 18, "price": 150000000000, "summerEvent": true}, {"id": "summer2026_33", "name": "파도폭풍 참치", "rarity": "☀️ 2026 여름한정", "tier": 18, "price": 165000000000, "summerEvent": true}, {"id": "summer2026_34", "name": "열대성운 돛새치", "rarity": "☀️ 2026 여름한정", "tier": 19, "price": 180000000000, "summerEvent": true}, {"id": "summer2026_35", "name": "황금산호 고래", "rarity": "☀️ 2026 여름한정", "tier": 19, "price": 200000000000, "summerEvent": true}, {"id": "summer2026_36", "name": "썬더볼트 전기뱀장어", "rarity": "☀️ 2026 여름한정", "tier": 19, "price": 220000000000, "summerEvent": true}, {"id": "summer2026_37", "name": "오션썬 킹피시", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 240000000000, "summerEvent": true}, {"id": "summer2026_38", "name": "여름별 대왕문어", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 260000000000, "summerEvent": true}, {"id": "summer2026_39", "name": "트로피컬 드래곤피시", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 280000000000, "summerEvent": true}, {"id": "summer2026_40", "name": "골든선셋 고등어", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 300000000000, "summerEvent": true}, {"id": "summer2026_41", "name": "블루파라다이스 청새치", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 320000000000, "summerEvent": true}, {"id": "summer2026_42", "name": "코랄문 대왕가오리", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 340000000000, "summerEvent": true}, {"id": "summer2026_43", "name": "태양왕 거대참치", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 360000000000, "summerEvent": true}, {"id": "summer2026_44", "name": "심해불꽃 상어", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 380000000000, "summerEvent": true}, {"id": "summer2026_45", "name": "아쿠아 드래곤어", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 400000000000, "summerEvent": true}, {"id": "summer2026_46", "name": "여름폭군 바라쿠다", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 420000000000, "summerEvent": true}, {"id": "summer2026_47", "name": "골든오션 고래상어", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 440000000000, "summerEvent": true}, {"id": "summer2026_48", "name": "선셋 크라운피시", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 460000000000, "summerEvent": true}, {"id": "summer2026_49", "name": "태양의 심해왕", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 480000000000, "summerEvent": true}, {"id": "summer2026_50", "name": "2026 썸머 레전드", "rarity": "☀️ 2026 여름한정", "tier": 20, "price": 500000000000, "summerEvent": true}];
-const SUMMER_EVENT_FISH_CHANCE = 0.015; // 전체 낚시 중 1.5%
-const SUMMER_EVENT_MISS_CHANCE = 0.30;  // 이벤트 판정 중 30% 꽝
-
-function getRandomSummerEventFish(){
-  return summerEventFish[Math.floor(Math.random()*summerEventFish.length)];
-}
-function trySummerEventCatch(){
-  if(!isSummerFishingOpen()) return {type:"closed"};
-  if(Math.random() >= SUMMER_EVENT_FISH_CHANCE) return {type:"normal"};
-  if(Math.random() < SUMMER_EVENT_MISS_CHANCE) return {type:"miss"};
-  return {type:"event",fish:getRandomSummerEventFish()};
-}
-function renderSummerMissResult(){
-  const el=document.getElementById("fishResult");
-  if(!el)return;
-  el.innerHTML=`<div class="big">🌊</div><h2>꽝!</h2><p>☀️ 여름한정 물고기를 노렸지만 놓쳤습니다!</p><p class="small">다음 기회를 노려보세요 🎣</p>`;
-}
-function grantSummerEventFish(caught){
-  currentUser.fishInventory[caught.id]=(currentUser.fishInventory[caught.id]||0)+1;
-  if(!Array.isArray(currentUser.fishDiscovered)) currentUser.fishDiscovered=[];
-  if(!currentUser.fishDiscovered.includes(caught.id)) currentUser.fishDiscovered.push(caught.id);
-  currentUser.totalFishCaught++;
-  const exp=10+caught.tier*15;
-  addExp(exp);
-  const el=document.getElementById("fishResult");
-  if(el) el.innerHTML=`<div class="big">☀️🐟</div><h2 class="rarity r${caught.tier}">${caught.name}</h2><p>🏖️ 2026 여름한정 · ${Number(caught.price).toLocaleString()} 코인</p><p class="small">+${exp} EXP</p><p>🎉 초희귀 이벤트 물고기 획득!</p>`;
-  saveGame();
-  renderAll();
-  toast(`☀️ 여름한정 ${caught.name} 획득! 💰 ${Number(caught.price).toLocaleString()} 코인`);
-}
-
-
-
-let currentFishingGround="normal";
-
-function setFishingGround(mode){
-  currentFishingGround = mode==="summer" ? "summer" : "normal";
-
-  const normalBtn=document.getElementById("normalGroundBtn");
-  const summerBtn=document.getElementById("summerGroundBtn");
-  const normalPanel=document.getElementById("normalGroundPanel");
-  const summerPanel=document.getElementById("summerGroundPanel");
-
-  normalBtn?.classList.toggle("active",currentFishingGround==="normal");
-  summerBtn?.classList.toggle("active",currentFishingGround==="summer");
-  normalPanel?.classList.toggle("hidden",currentFishingGround!=="normal");
-  summerPanel?.classList.toggle("hidden",currentFishingGround!=="summer");
-
-  updateSummerFishingEventUI();
-  updateAutoStatus();
-}
-
 function fishOnce(){
-  if(currentFishingGround==="summer"){
-    fishSummerOnce();
-  }else{
-    fishNormalOnce();
-  }
+
+const caught=getRandomFish();
+
+currentUser.fishInventory[caught.id]=
+(currentUser.fishInventory[caught.id]||0)+1;
+
+if(
+!currentUser.fishDiscovered
+.includes(caught.id)
+){
+
+currentUser.fishDiscovered.push(
+caught.id
+);
+
+checkFishDexReward();
+
 }
 
-/* 🌊 일반 낚시터: 일반 물고기만 등장 */
-function fishNormalOnce(){
-  const caught=getRandomFish();
+currentUser.totalFishCaught++;
 
-  currentUser.fishInventory[caught.id]=
-    (currentUser.fishInventory[caught.id]||0)+1;
+const exp=
+10+
+caught.tier*15;
 
-  if(!Array.isArray(currentUser.fishDiscovered))
-    currentUser.fishDiscovered=[];
+addExp(exp);
 
-  if(!currentUser.fishDiscovered.includes(caught.id)){
-    currentUser.fishDiscovered.push(caught.id);
-    checkFishDexReward();
-  }
+let itemDrop=null;
 
-  currentUser.totalFishCaught++;
+const stats=getTotalStats();
 
-  const exp=10+caught.tier*15;
-  addExp(exp);
+const itemChance=
+12+stats.item;
 
-  let itemDrop=null;
-  const stats=getTotalStats();
-  const itemChance=12+stats.item;
+if(
+Math.random()*100<
+itemChance
+){
 
-  if(Math.random()*100<itemChance){
-    const normalItems=items.filter(x=>!x.special);
-    if(normalItems.length){
-      itemDrop=normalItems[Math.floor(Math.random()*normalItems.length)];
-      currentUser.itemInventory[itemDrop.id]=
-        (currentUser.itemInventory[itemDrop.id]||0)+1;
+const normalItems=items.filter(x=>!x.special);
+itemDrop=
+normalItems[
+Math.floor(
+Math.random()*normalItems.length
+)
+];
 
-      if(!currentUser.itemDiscovered.includes(itemDrop.id))
-        currentUser.itemDiscovered.push(itemDrop.id);
-    }
-  }
+currentUser.itemInventory[itemDrop.id]=
+(currentUser.itemInventory[itemDrop.id]||0)+1;
 
-  renderFishResult(caught,exp,itemDrop);
-  saveGame();
-  renderAll();
+if(
+!currentUser.itemDiscovered
+.includes(itemDrop.id)
+){
+
+currentUser.itemDiscovered.push(
+itemDrop.id
+);
+
 }
 
-/* ☀️ 여름축제 낚시터: 이벤트 물고기만 등장 */
-function fishSummerOnce(){
-  if(!isSummerFishingOpen()){
-    toast("🌙 여름축제 낚시 기간이 아닙니다.");
-    return;
-  }
-
-  const summerResult=trySummerEventCatch();
-
-  if(summerResult.type==="miss"){
-    renderSummerMissResult();
-    toast("🌊 아쉽게도 여름한정 물고기를 놓쳤습니다! (꽝)");
-    return;
-  }
-
-  if(summerResult.type==="event"){
-    grantSummerEventFish(summerResult.fish);
-    return;
-  }
-
-  const el=document.getElementById("fishResult");
-  if(el){
-    el.innerHTML=`
-      <div class="big">🌊</div>
-      <h2>🎣 이벤트 물고기를 찾는 중...</h2>
-      <p>이번에는 일반 물고기도, 이벤트 물고기도 잡히지 않았습니다.</p>
-      <p class="small">여름축제 낚시터에서는 이벤트 판정만 적용됩니다.</p>
-    `;
-  }
 }
 
-/* 이벤트 종료 후에는 여름축제 자동낚시만 정지 */
-function enforceSummerFishingPeriod(){
-  if(currentFishingGround==="summer" && !isSummerFishingOpen() && autoFishing){
-    autoFishing=false;
-    if(autoTimer){
-      clearInterval(autoTimer);
-      autoTimer=null;
-    }
-    updateAutoStatus();
-    toast("🌙 여름축제 이벤트가 종료되어 자동 낚시가 중지되었습니다.");
-  }
+renderFishResult(
+caught,
+exp,
+itemDrop
+);
+
+saveGame();
+renderAll();
+
 }
 
 function renderFishResult(
@@ -14471,10 +13308,6 @@ let autoFishing=false;
 let autoTimer=null;
 
 function toggleAutoFishing(){
-  if(currentFishingGround==="summer" && !isSummerFishingOpen()){
-    toast("🌙 여름축제 낚시 기간이 아닙니다.");
-    return;
-  }
 
 autoFishing=!autoFishing;
 
@@ -14619,7 +13452,8 @@ currentUser.fishInventory[id]||0;
 if(amount<=0)
 return;
 
-const f=(fish.concat(summerEventFish)).find(x=>x.id===id);
+const f=
+fish.find(x=>x.id===id);
 
 if(!f)
 return;
@@ -14634,7 +13468,8 @@ amount*
 (1+stats.sell/100)
 );
 
-addCoins(price);
+currentUser.coins+=price;
+currentUser.totalCoinsEarned+=price;
 
 delete currentUser.fishInventory[id];
 
@@ -14661,7 +13496,8 @@ for(const id in currentUser.fishInventory){
 const amount=
 currentUser.fishInventory[id];
 
-const f=(fish.concat(summerEventFish)).find(x=>x.id===id);
+const f=
+fish.find(x=>x.id===id);
 
 if(!f)
 continue;
@@ -15022,7 +13858,6 @@ renderBattle();
 renderTransfer();
 renderLevelSteal();
 renderAdmin();
-renderOwnerCoinMultiplier();
 
 }
 
@@ -15326,12 +14161,12 @@ function renderFishDex(){
 
 document.getElementById("fishDexCount")
 .textContent=
-`${currentUser.fishDiscovered.length} / ${fish.length + summerEventFish.length} 발견`;
+`${currentUser.fishDiscovered.length} / ${fish.length} 발견`;
 
 
 document.getElementById("fishDexGrid")
 .innerHTML=
-fish.concat(summerEventFish).map(f=>{
+fish.map(f=>{
 
 const discovered=
 currentUser.fishDiscovered
@@ -15477,7 +14312,8 @@ fishInv.innerHTML=
 fishInv.innerHTML=
 fishIds.map(id=>{
 
-const f=(fish.concat(summerEventFish)).find(x=>x.id===id);
+const f=
+fish.find(x=>x.id===id);
 
 const amount=
 currentUser.fishInventory[id];
@@ -16831,7 +15667,8 @@ Math.floor(
 )
 );
 
-addCoins(reward);
+currentUser.coins+=reward;
+currentUser.totalCoinsEarned+=reward;
 
 toast(
 "🏆 승리! "+
@@ -16996,7 +15833,6 @@ battle=null;
 renderAll();
 
 }
-
 
 
 /* ==============================
@@ -17311,6 +16147,136 @@ el.style.display="none";
 
 
 /* ==============================
+🎲 무료 행운 게임
+실제 addExp() 시스템과 연결
+============================== */
+
+let chanceGamePlaying=false;
+
+function playChanceGame(){
+
+if(!currentUser || chanceGamePlaying)
+return;
+
+chanceGamePlaying=true;
+
+const button=document.getElementById("chanceButton");
+const result=document.getElementById("chanceResult");
+
+if(button){
+button.disabled=true;
+button.textContent="🎲 결과 계산 중...";
+}
+
+if(result)
+result.textContent="🎲 ...";
+
+const animation=setInterval(()=>{
+
+const preview=[
+"🟢 1.5배",
+"🔵 6배",
+"🟣 12배",
+"🟠 20배",
+"🔴 28배",
+"🟡 40배",
+"💎 70배",
+"👑 100배"
+];
+
+if(result){
+result.textContent=
+preview[
+Math.floor(
+Math.random()*preview.length
+)
+];
+}
+
+},100);
+
+setTimeout(()=>{
+
+clearInterval(animation);
+
+const random=Math.random()*100;
+
+let multiplier;
+
+if(random<45){
+multiplier=1.5;
+}else if(random<70){
+multiplier=6;
+}else if(random<85){
+multiplier=12;
+}else if(random<93){
+multiplier=20;
+}else if(random<97){
+multiplier=28;
+}else if(random<99){
+multiplier=40;
+}else if(random<99.9){
+multiplier=70;
+}else{
+multiplier=100;
+}
+
+/*
+* 배율은 EXP 계산에만 사용합니다.
+* 코인은 차감/지급하지 않습니다.
+*/
+const expGain=Math.floor(multiplier*10);
+
+// ★ 네 게임의 실제 EXP 시스템 사용
+addExp(expGain);
+
+// 저장 + 홈 EXP 바/레벨 즉시 갱신
+saveGame();
+renderAll();
+
+if(result)
+result.textContent=
+"🎉 "+multiplier+"배 결과!";
+
+const gainEl=
+document.getElementById("chanceExpGain");
+
+const currentExpEl=
+document.getElementById("chanceCurrentExp");
+
+if(gainEl)
+gainEl.textContent=
+expGain.toLocaleString();
+
+if(currentExpEl)
+currentExpEl.textContent=
+Math.floor(currentUser.exp).toLocaleString();
+
+if(multiplier>=70){
+toast(
+"👑 대박! "+multiplier+
+"배 → +"+expGain+" EXP"
+);
+}else{
+toast(
+"🎉 "+multiplier+
+"배 → +"+expGain+" EXP"
+);
+}
+
+if(button){
+button.disabled=false;
+button.textContent="🎲 무료 게임 시작";
+}
+
+chanceGamePlaying=false;
+
+},1800);
+
+}
+
+
+/* ==============================
 자동 로그인
 ============================== */
 
@@ -17361,170 +16327,66 @@ autoLogin();
 
 </script>
 
-</body></html>
 
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>🎣 낚시왕 - 2026 여름 축제 낚시도감</title>
-<style>
-:root{
-  --bg:#050914;--panel:rgba(12,24,43,.78);--panel2:rgba(18,34,58,.82);
-  --line:rgba(120,190,255,.18);--text:#f5fbff;--muted:#8fa9c5;
-  --blue:#38bdf8;--cyan:#22d3ee;--violet:#8b5cf6;--pink:#f472b6;
-  --green:#34d399;--gold:#fbbf24;--red:#fb7185;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;min-height:100vh;color:var(--text);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  background:
-    radial-gradient(circle at 15% 10%,rgba(34,211,238,.16),transparent 28%),
-    radial-gradient(circle at 85% 15%,rgba(139,92,246,.18),transparent 30%),
-    radial-gradient(circle at 50% 100%,rgba(56,189,248,.10),transparent 35%),
-    linear-gradient(145deg,#020617,#071326 52%,#030712);
-  background-attachment:fixed;
-}
-.container{max-width:1180px!important;margin:auto;padding:28px!important}
-.card{
-  position:relative;overflow:hidden;
-  background:linear-gradient(145deg,rgba(15,32,55,.88),rgba(7,18,34,.82))!important;
-  border:1px solid var(--line)!important;border-radius:22px!important;
-  padding:24px!important;margin-bottom:18px!important;
-  box-shadow:0 18px 55px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.045);
-  backdrop-filter:blur(16px);
-}
-h1,h2,h3{letter-spacing:-.02em;margin-top:0}
-h1{font-size:clamp(28px,4vw,42px);text-shadow:0 0 25px rgba(56,189,248,.25)}
-h2{font-size:25px}
-.small{color:var(--muted)!important;font-size:13px}
-button{
-  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)!important;
-  border-radius:13px!important;padding:12px 17px!important;color:#fff;
-  background:linear-gradient(135deg,#203654,#172a45)!important;
-  cursor:pointer;font-weight:700;
-  box-shadow:0 7px 18px rgba(0,0,0,.18);
-  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;
-}
-button:hover{transform:translateY(-2px);filter:brightness(1.13);box-shadow:0 10px 25px rgba(0,0,0,.3)}
-.primary{background:linear-gradient(135deg,#0ea5e9,#2563eb)!important}
-.success{background:linear-gradient(135deg,#10b981,#059669)!important}
-.warning{background:linear-gradient(135deg,#f59e0b,#d97706)!important}
-.danger{background:linear-gradient(135deg,#f43f5e,#be123c)!important}
-.nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.nav button{background:rgba(24,48,77,.75)!important}
-.nav button.active{background:linear-gradient(135deg,#3ee4ed,#1e9ee8)!important;color:#06121f!important;box-shadow:0 0 20px rgba(34,211,238,.4)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
-.item{
-  background:linear-gradient(145deg,rgba(23,47,75,.72),rgba(10,25,46,.76))!important;
-  border:1px solid rgba(120,190,255,.14);border-radius:17px!important;
-  padding:18px!important;box-shadow:inset 0 1px rgba(255,255,255,.04);
-  transition:transform .2s,border-color .2s;
-}
-.item:hover{transform:translateY(-3px);border-color:rgba(56,189,248,.4)}
-.item.locked{opacity:0.5;background:linear-gradient(145deg,rgba(10,20,35,.7),rgba(5,12,22,.7))!important}
-.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;background:rgba(255,225,104,.15);color:#ffe27a;border:1px solid rgba(255,225,104,.3)}
-.progress{height:14px;background:#071426;border-radius:10px;overflow:hidden;border:1px solid rgba(120,190,255,.15);margin:10px 0}
-.progress-bar{height:100%;background:linear-gradient(90deg,#06b6d4,#38bdf8,#8b5cf6);border-radius:10px}
-.center{text-align:center}
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="card">
-    <span class="badge">☀️ 2026 SUMMER FESTIVAL</span>
-    <h1>🏖️ 여름 축제 낚시도감</h1>
-    <p class="small">2026년 여름 축제 기간 동안만 만나볼 수 있는 특별한 물고기 50종의 수집 도감입니다.</p>
-    
-    <div style="margin-top:16px;">
-      <b>수집 진척도: <span id="summerDexCount">18 / 50</span> (36%)</b>
-      <div class="progress">
-        <div class="progress-bar" style="width: 36%;"></div>
-      </div>
-    </div>
-
-    <div class="nav">
-      <button class="active" onclick="filterSummerDex('all')">전체보기 (50)</button>
-      <button onclick="filterSummerDex('collected')">보유중 (18)</button>
-      <button onclick="filterSummerDex('missing')">미발견 (32)</button>
-      <button onclick="location.href='index.html'" class="primary">⬅️ 메인 게임으로 돌아가기</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>🐠 축제 물고기 목록</h2>
-    <div id="summerDexGrid" class="grid">
-      <!-- Generated by script -->
-    </div>
-  </div>
-</div>
 
 <script>
-const summerFishData = [
-  {id: 1, name: "트로피칼 아로와나", rarity: "레전더리", price: 150000, collected: true, desc: "무지개 빛깔의 비늘을 가진 화려한 여름 축제 마스코트 물고기."},
-  {id: 2, name: "썬셋 오징어", rarity: "영웅", price: 75000, collected: true, desc: "노을빛 바다 수면 위로 뛰어오르는 신비로운 오징어."},
-  {id: 3, name: "코코넛 게", rarity: "희귀", price: 25000, collected: true, desc: "야자수 그늘 아래 모래사장에서 발견되는 녀석."},
-  {id: 4, name: "아이스 빙수어", rarity: "초월", price: 300000, collected: true, desc: "한여름 더위를 한 방에 날려버릴 만큼 차가운 체온을 지닌 물고기."},
-  {id: 5, name: "파라다이스 탱", rarity: "고급", price: 8000, collected: true, desc: "에메랄드 빛 산호초 사이를 유영하는 아름다운 물고기."},
-  {id: 6, name: "비치볼 복어", rarity: "일반", price: 1500, collected: true, desc: "동글동글해서 마치 해변의 비치볼처럼 보이는 귀여운 복어."},
-  {id: 7, name: "골드 웨이브 샤크", rarity: "신화", price: 1200000, collected: false, desc: "여름 축제의 대양을 지배하는 황금빛 상어."},
-  {id: 8, name: "스타섬 해마", rarity: "전설", price: 500000, collected: false, desc: "밤하늘의 별빛을 품은 듯 반짝이는 작은 해마."},
-  {id: 9, name: "서핑 거북이", rarity: "영웅", price: 85000, collected: true, desc: "파도를 타며 서핑을 즐기는 여유로운 거북이."},
-  {id: 10, name: "수박 바다표범", rarity: "전설", price: 600000, collected: false, desc: "수박 무늬의 털을 가진 유쾌한 바다표범."},
-  // ... generating up to 50 items programmatically for robust display
-];
-
-// Fill up to 50 mock summer fish
-for(let i=11; i<=50; i++) {
-  summerFishData.push({
-    id: i,
-    name: `여름축제 특별어 #${i}`,
-    rarity: i % 5 === 0 ? '레전더리' : (i % 3 === 0 ? '영웅' : '희귀'),
-    price: i * 10000,
-    collected: i <= 18,
-    desc: `2026 여름 축제 바다 심층부에서 발견된 특별한 물고기 #${i}.`
-  });
+function getFullHTMLSource(){
+return "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
 }
 
-function renderSummerDex(filter = 'all') {
-  const grid = document.getElementById('summerDexGrid');
-  grid.innerHTML = '';
-  
-  let filtered = summerFishData;
-  if(filter === 'collected') filtered = summerFishData.filter(f => f.collected);
-  if(filter === 'missing') filtered = summerFishData.filter(f => !f.collected);
+function copyAllSource(){
+const source=getFullHTMLSource();
+const btn=document.getElementById("copyAllSourceBtn");
 
-  document.getElementById('summerDexCount').innerText = `${summerFishData.filter(f => f.collected).length} / 50`;
-
-  filtered.forEach(fish => {
-    const div = document.createElement('div');
-    div.className = `item ${fish.collected ? '' : 'locked'}`;
-    div.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <h3 style="margin:0 0 6px; color:${fish.collected ? '#38bdf8' : '#64748b'}">${fish.name}</h3>
-        <span class="badge" style="font-size:10px;">No.${fish.id}</span>
-      </div>
-      <p style="margin:4px 0; font-weight:700; color:${fish.collected ? '#fbbf24' : '#64748b'}">${fish.rarity}</p>
-      <p class="small" style="margin:6px 0;">${fish.collected ? fish.desc : '🔒 아직 발견하지 못한 축제 물고기입니다.'}</p>
-      <p style="margin:6px 0 0; font-weight:800; font-size:13px;">💰 가치: ${fish.collected ? fish.price.toLocaleString() + ' 코인' : '???'}</p>
-    `;
-    grid.appendChild(div);
-  });
+function success(){
+if(btn){
+const old=btn.textContent;
+btn.textContent="✅ 전체 코드 복사 완료!";
+setTimeout(()=>btn.textContent=old,1800);
+}
 }
 
-function filterSummerDex(type) {
-  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  renderSummerDex(type);
+if(navigator.clipboard && window.isSecureContext){
+navigator.clipboard.writeText(source).then(success).catch(()=>{
+fallbackCopySource(source,success);
+});
+}else{
+fallbackCopySource(source,success);
+}
 }
 
-renderSummerDex('all');
+function fallbackCopySource(source,done){
+const box=document.createElement("textarea");
+box.value=source;
+box.style.position="fixed";
+box.style.left="-9999px";
+document.body.appendChild(box);
+box.focus();
+box.select();
+
+try{
+document.execCommand("copy");
+done();
+}catch(e){
+alert("자동 복사에 실패했습니다. 코드 보기에서 전체 코드를 직접 복사해주세요.");
+}
+
+box.remove();
+}
+
+function toggleSourceViewer(){
+const viewer=document.getElementById("sourceViewer");
+const box=document.getElementById("sourceCodeBox");
+
+if(viewer.style.display==="none"){
+box.value=getFullHTMLSource();
+viewer.style.display="block";
+}else{
+viewer.style.display="none";
+}
+}
 </script>
-</body>
-</html>
-summer_fishing_dex.html
-summer_fishing_dex.html 항목을 표시하는 중입니다.
+
+
+
+</body></html>
