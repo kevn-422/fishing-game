@@ -76,6 +76,142 @@ function renderCataclysm(){const d=catData(),bar=document.getElementById('catacl
 setInterval(()=>{if(document.getElementById('octoberCataclysmPage'))renderCataclysm()},1000);
 </script>
 
+
+<style>
+/* ===== 🎣 낚시왕 신규 대시보드 UI ===== */
+#gamePage{
+  max-width:1450px!important;
+  padding:24px 24px 60px!important;
+}
+#gamePage > .card:first-child{
+  margin-left:238px!important;
+  min-height:86px;
+  display:flex;
+  align-items:center;
+  gap:22px;
+  padding:18px 24px!important;
+  background:linear-gradient(135deg,#0e1d31,#122a43)!important;
+  border:1px solid #284663!important;
+  box-shadow:0 12px 35px rgba(0,0,0,.22);
+  position:sticky;
+  top:14px;
+  z-index:900;
+}
+#gamePage > .card:first-child h1{
+  margin:0!important;
+  font-size:25px;
+  white-space:nowrap;
+}
+#userInfo{
+  flex:1;
+  color:#b9cbe0;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  padding:11px 14px;
+  line-height:1.5;
+}
+#gamePage > .card:first-child .nav{
+  position:fixed;
+  left:18px;
+  top:18px;
+  bottom:18px;
+  width:205px;
+  margin:0!important;
+  padding:18px 12px;
+  display:flex;
+  flex-direction:column;
+  flex-wrap:nowrap;
+  gap:7px;
+  overflow-y:auto;
+  background:linear-gradient(180deg,#0c1829,#0a1422);
+  border:1px solid #263c55;
+  border-radius:18px;
+  box-shadow:0 18px 45px rgba(0,0,0,.32);
+  z-index:1000;
+}
+#gamePage > .card:first-child .nav::before{
+  content:'🎣 낚시왕 MENU';
+  display:block;
+  color:#67d8ff;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.5px;
+  padding:2px 8px 9px;
+  border-bottom:1px solid #20354b;
+  margin-bottom:2px;
+}
+#gamePage > .card:first-child .nav button{
+  width:100%;
+  margin:0!important;
+  min-height:43px;
+  text-align:left;
+  padding:10px 12px;
+  border-radius:11px;
+  background:#13253a;
+  border:1px solid transparent;
+  color:#dcecff;
+  transition:transform .15s,background .15s,border-color .15s;
+}
+#gamePage > .card:first-child .nav button:hover{
+  transform:translateX(3px);
+  background:#1b3856;
+  border-color:#2d7197;
+}
+#gamePage > .card:first-child .nav button.primary{background:#1677d2}
+#gamePage > .card:first-child .nav .danger{background:#3a1d29}
+#gamePage > .page{
+  margin-left:238px;
+  max-width:none;
+}
+#gamePage > .page > .card{
+  border-radius:18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.16);
+}
+/* 홈 통계는 카드형 3열 대시보드 */
+#homeStats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#homeStats .stat{min-height:105px;border:1px solid #203b58}
+#homeStats .big{font-size:25px;margin-top:8px}
+/* 낚시 화면의 선택 영역을 3열로 정돈 */
+#fishing .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+/* 코인 챌린지 강조 */
+#coinChallengePage .card:first-child,
+#specialGachaPage .card:first-child{
+  border-color:#315c7e;
+}
+/* 스크롤바 */
+#gamePage > .card:first-child .nav::-webkit-scrollbar{width:6px}
+#gamePage > .card:first-child .nav::-webkit-scrollbar-thumb{background:#29445e;border-radius:10px}
+@media(max-width:900px){
+  #gamePage{padding:12px!important}
+  #gamePage > .card:first-child,
+  #gamePage > .page{margin-left:0!important}
+  #gamePage > .card:first-child{
+    display:block;
+    position:relative;
+    top:auto;
+  }
+  #gamePage > .card:first-child h1{margin-bottom:12px!important}
+  #gamePage > .card:first-child .nav{
+    position:static;
+    width:100%;
+    height:auto;
+    max-height:260px;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    padding:10px;
+  }
+  #gamePage > .card:first-child .nav::before{grid-column:1/-1}
+  #gamePage > .card:first-child .nav button{text-align:center}
+  #homeStats,#fishing .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:560px){
+  #homeStats,#fishing .grid{grid-template-columns:1fr!important}
+  #gamePage > .card:first-child .nav{grid-template-columns:1fr}
+  #gamePage > .card:first-child .nav::before{grid-column:auto}
+}
+</style>
+
 </body>
 
 <style>
