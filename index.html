@@ -410,7 +410,7 @@ line-height:1.45;"></textarea>
 <button onclick="showPage('equipment')">🛡️ 장비</button>
 <button onclick="showPage('shop')">🏪 상점</button>
 <button onclick="showPage('chanceGamePage')">🎲 행운 게임</button>
-<button onclick="showPage('fishWordGamePage')">🔤 물고기 끝말잇기</button>
+<button onclick="showPage('coinChallengePage')">🪙 코인 챌린지</button>
 <button onclick="showPage('specialGachaPage')">🎁 특별 아이템 뽑기</button><button onclick="showPage('octoberCataclysmPage')">🌊 10월 바다 대격변</button>
 <button id="adminNavButton" class="danger hidden" onclick="showPage('admin')">👑 관리자</button>
 <button class="danger" onclick="logout()">로그아웃</button>
@@ -11499,40 +11499,13 @@ x1
 
 <!-- 🎲 무료 행운 게임 -->
 
-<section id="fishWordGamePage" class="page hidden">
-<div class="card">
-<h2>🐟 물고기 이름 끝말잇기</h2>
-<p class="small">물고기 이름으로 AI와 끝말잇기를 합니다. 승리하면 보상 룰렛을 돌려 코인 보너스를 정합니다. 패배해도 코인을 잃지 않습니다.</p>
-<div id="wordGameStatus" class="fish-result" style="min-height:110px;"><div class="big">🐟</div><p>아무 물고기 이름이나 입력해 시작하세요!</p></div>
-
-<div class="card" style="margin-top:12px;">
-<h3>🤖 AI 난이도</h3>
-<select id="fishWordDifficulty" onchange="changeFishWordDifficulty()" style="width:100%;">
-<option value="veryEasy">🟢 완전 쉬움</option>
-<option value="easy">🔵 쉬움</option>
-<option value="normal" selected>🟣 보통</option>
-<option value="hard">🟠 어려움</option>
-<option value="veryHard">🔴 완전 어려움</option>
-</select>
-<p id="fishWordDifficultyInfo" class="small">보통: 일반적인 물고기 이름을 선택합니다.</p>
-</div>
-
-<div class="grid">
-<div class="stat"><b>현재 차례</b><br><span id="wordGameTurn">플레이어</span></div>
-<div class="stat"><b>사용 단어 수</b><br><span id="wordGameCount">0</span></div>
-</div>
-<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-<input id="wordGameInput" placeholder="예: 고등어" style="flex:1;min-width:180px;">
-<button class="primary" onclick="playFishWord()">말하기</button>
-<button onclick="resetFishWordGame()">다시 시작</button>
-</div>
-<div id="wordGameHistory" class="item" style="margin-top:12px;max-height:260px;overflow:auto;"></div>
-<div id="wordGameRoulette" class="hidden" style="margin-top:15px;text-align:center;padding:18px;background:#16263d;border-radius:15px;">
-<h3>🎰 승리 보상 룰렛</h3><div id="wordRouletteResult" class="big">🎁</div>
-<button class="success" onclick="spinFishRoulette()">🎰 룰렛 돌리기</button>
-</div>
-</div>
-</section>
+<section id="coinChallengePage" class="page hidden">
+<div class="card"><h2>🪙 코인 챌린지</h2><p class="small">코인을 걸거나 잃지 않고, 문제를 맞힐 때마다 코인을 획득하는 미니게임입니다.</p>
+<div id="coinChallengeStatus" class="fish-result" style="min-height:110px;text-align:center;"><div class="big">🪙</div><p>시작 버튼을 눌러 코인 챌린지를 시작하세요!</p></div>
+<div class="grid"><div class="stat"><b>현재 라운드</b><br><span id="coinChallengeRound">0 / 5</span></div><div class="stat"><b>획득 코인</b><br><span id="coinChallengeReward">0</span></div></div>
+<div class="card" style="margin-top:12px;text-align:center;"><h3>🎯 숫자 찾기</h3><p id="coinChallengePrompt">시작하면 정답 숫자가 표시됩니다.</p><div id="coinChallengeChoices" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"></div></div>
+<div style="margin-top:12px;text-align:center;"><button id="coinChallengeStartBtn" class="primary" onclick="startCoinChallenge()">🪙 챌린지 시작</button> <button onclick="resetCoinChallenge()">다시 시작</button></div>
+<div class="small" style="margin-top:12px;">※ 베팅·입장료·코인 손실은 없습니다. 5라운드 동안 정답을 맞힐수록 보상이 늘어납니다.</div></div></section>
 
 <section id="chanceGamePage" class="page hidden">
 
@@ -16493,201 +16466,36 @@ renderLevelSteal();
 
 
 /* ==============================
-🐟 물고기 이름 끝말잇기 vs AI
-※ 코인 베팅/손실 없이 승리 보상만 지급
+ 🪙 코인 챌린지
+ ※ 베팅/코인 손실 없이 정답 보상만 지급
 ============================== */
-let fishWordGame={active:false,lastWord:"",used:[],playerTurn:true};
-let fishWordDifficulty="normal";
-
-const fishRouletteRewards=[1000,3000,5000,10000,20000,50000,100000,500000];
-
-const fishWordDifficultyConfig={
- veryEasy:{name:"완전 쉬움",delay:1100,smart:0.05,preferShort:true,desc:"AI가 자주 막히는 단어를 우선 선택합니다."},
- easy:{name:"쉬움",delay:850,smart:0.25,preferShort:true,desc:"AI가 가끔 좋은 단어를 선택합니다."},
- normal:{name:"보통",delay:600,smart:0.50,preferShort:false,desc:"AI가 일반적인 전략으로 플레이합니다."},
- hard:{name:"어려움",delay:400,smart:0.80,preferShort:false,desc:"AI가 다음 연결을 미리 계산해 유리한 단어를 찾습니다."},
- veryHard:{name:"완전 어려움",delay:250,smart:1.00,preferShort:false,desc:"AI가 여러 수를 탐색해 최대한 오래 이어갑니다."}
-};
-
-function wordLast(w){ return String(w).replace(/\s+/g,"").slice(-1); }
-function wordKey(w){ return String(w).replace(/\s+/g,""); }
-
-function changeFishWordDifficulty(){
- const el=document.getElementById("fishWordDifficulty");
- if(el) fishWordDifficulty=el.value;
- const cfg=fishWordDifficultyConfig[fishWordDifficulty];
- const info=document.getElementById("fishWordDifficultyInfo");
- if(info) info.textContent=cfg.name+": "+cfg.desc;
- resetFishWordGame();
+let coinChallenge={active:false,round:0,reward:0,answer:null};
+function resetCoinChallenge(){
+ coinChallenge={active:false,round:0,reward:0,answer:null};
+ const status=document.getElementById("coinChallengeStatus"),round=document.getElementById("coinChallengeRound"),reward=document.getElementById("coinChallengeReward"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),start=document.getElementById("coinChallengeStartBtn");
+ if(status)status.innerHTML='<div class="big">🪙</div><p>시작 버튼을 눌러 코인 챌린지를 시작하세요!</p>';
+ if(round)round.textContent="0 / 5"; if(reward)reward.textContent="0"; if(prompt)prompt.textContent="시작하면 정답 숫자가 표시됩니다."; if(choices)choices.innerHTML=""; if(start){start.disabled=false;start.textContent="🪙 챌린지 시작";}
 }
-
-function getFishWordCandidates(lastChar){
- return fishNames.filter(x=>{
-  const k=wordKey(x);
-  return k && !fishWordGame.used.includes(k) && k[0]===lastChar;
- });
+function startCoinChallenge(){
+ if(!currentUser)return; coinChallenge={active:true,round:0,reward:0,answer:null};
+ const start=document.getElementById("coinChallengeStartBtn"); if(start){start.disabled=true;start.textContent="진행 중...";} renderCoinChallengeRound();
 }
-
-function countNextMoves(word){
- const last=wordLast(word);
- return fishNames.reduce((count,x)=>{
-  const k=wordKey(x);
-  if(k && !fishWordGame.used.includes(k) && k!==wordKey(word) && k[0]===last) return count+1;
-  return count;
- },0);
+function renderCoinChallengeRound(){
+ if(!coinChallenge.active)return; coinChallenge.round++; coinChallenge.answer=Math.floor(Math.random()*9)+1;
+ const round=document.getElementById("coinChallengeRound"),reward=document.getElementById("coinChallengeReward"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),status=document.getElementById("coinChallengeStatus");
+ if(round)round.textContent=coinChallenge.round+" / 5"; if(reward)reward.textContent=coinChallenge.reward.toLocaleString(); if(status)status.innerHTML='<div class="big">🎯</div><p>정답 숫자를 찾아보세요!</p>'; if(prompt)prompt.innerHTML='정답은 <b style="font-size:28px;">'+coinChallenge.answer+'</b> 입니다. 아래에서 선택하세요.';
+ if(choices){choices.innerHTML="";const nums=[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);nums.forEach(n=>{const b=document.createElement("button");b.textContent="🔢 "+n;b.onclick=()=>answerCoinChallenge(n);choices.appendChild(b);});}
 }
-
-function chooseAIWord(candidates){
- const cfg=fishWordDifficultyConfig[fishWordDifficulty];
- if(!candidates.length) return null;
-
- // 완전 쉬움/쉬움은 일부러 선택 폭을 넓혀 AI가 자주 막히게 함
- if(Math.random()>cfg.smart){
-  if(cfg.preferShort){
-   const sorted=candidates.slice().sort((a,b)=>wordKey(a).length-wordKey(b).length);
-   const pool=sorted.slice(0,Math.max(1,Math.ceil(sorted.length*0.65)));
-   return pool[Math.floor(Math.random()*pool.length)];
-  }
-  return candidates[Math.floor(Math.random()*candidates.length)];
- }
-
- // 어려움 이상: 다음에 이어질 선택지가 많은 단어를 우선
- const scored=candidates.map(word=>({
-  word,
-  next:countNextMoves(word),
-  len:wordKey(word).length
- }));
-
- scored.sort((a,b)=>{
-  if(b.next!==a.next) return b.next-a.next;
-  return a.len-b.len;
- });
-
- const topCount=fishWordDifficulty==="veryHard"
-  ? Math.max(1,Math.ceil(scored.length*0.12))
-  : Math.max(1,Math.ceil(scored.length*0.30));
-
- return scored[Math.floor(Math.random()*topCount)].word;
+function answerCoinChallenge(n){
+ if(!currentUser||!coinChallenge.active)return;
+ if(n===coinChallenge.answer){const gain=coinChallenge.round*2000;coinChallenge.reward+=gain;toast("✅ 정답! +"+gain.toLocaleString()+" 코인");}else toast("❌ 오답! 코인을 잃지는 않습니다.");
+ if(coinChallenge.round>=5){coinChallenge.active=false;currentUser.coins+=coinChallenge.reward;currentUser.totalCoinsEarned=(currentUser.totalCoinsEarned||0)+coinChallenge.reward;saveGame();renderAll();
+  const status=document.getElementById("coinChallengeStatus"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),start=document.getElementById("coinChallengeStartBtn");
+  if(status)status.innerHTML='<div class="big">🏆</div><p>챌린지 완료!</p>'; if(prompt)prompt.innerHTML='<b>총 '+coinChallenge.reward.toLocaleString()+' 코인</b>을 획득했습니다!'; if(choices)choices.innerHTML=""; if(start){start.disabled=false;start.textContent="🪙 다시 도전";} return;}
+ renderCoinChallengeRound();
 }
+resetCoinChallenge();
 
-function resetFishWordGame(){
- fishWordGame={active:true,lastWord:"",used:[],playerTurn:true};
- const h=document.getElementById("wordGameHistory"); if(h) h.innerHTML="";
- const turn=document.getElementById("wordGameTurn"); if(turn) turn.textContent="플레이어";
- const count=document.getElementById("wordGameCount"); if(count) count.textContent="0";
- const status=document.getElementById("wordGameStatus");
- if(status) status.innerHTML="<div class=\"big\">🐟</div><p>플레이어가 먼저 물고기 이름을 말하세요!</p>";
- const roulette=document.getElementById("wordGameRoulette");
- if(roulette) roulette.classList.add("hidden");
- const input=document.getElementById("wordGameInput");
- if(input) input.value="";
- const diff=document.getElementById("fishWordDifficulty");
- if(diff) diff.value=fishWordDifficulty;
- const info=document.getElementById("fishWordDifficultyInfo");
- if(info) info.textContent=fishWordDifficultyConfig[fishWordDifficulty].name+": "+fishWordDifficultyConfig[fishWordDifficulty].desc;
-}
-
-function playFishWord(){
- if(!currentUser)return;
- if(!fishWordGame.active) resetFishWordGame();
-
- const input=document.getElementById("wordGameInput");
- const word=input.value.trim();
- if(!word)return toast("🐟 물고기 이름을 입력하세요.");
-
- const idx=fishNames.findIndex(x=>wordKey(x)===wordKey(word));
- if(idx<0)return toast("📖 도감에 있는 물고기 이름만 사용할 수 있습니다.");
-
- const selected=fishNames[idx];
- const key=wordKey(selected);
-
- if(fishWordGame.used.includes(key))return toast("🔁 이미 사용한 물고기입니다.");
- if(fishWordGame.lastWord && key[0]!==wordLast(fishWordGame.lastWord))
-  return toast("❌ '"+wordLast(fishWordGame.lastWord)+"'로 시작해야 합니다.");
-
- fishWordGame.used.push(key);
- fishWordGame.lastWord=selected;
- addFishWordHistory("🙋 플레이어",selected);
- input.value="";
- updateFishWordUI();
-
- const candidates=getFishWordCandidates(wordLast(fishWordGame.lastWord));
-
- if(!candidates.length){
-  fishWordGame.active=false;
-  document.getElementById("wordGameStatus").innerHTML="<div class=\"big\">🏆</div><p>AI가 이어갈 물고기를 찾지 못했습니다!</p>";
-  document.getElementById("wordGameRoulette").classList.remove("hidden");
-  document.getElementById("wordGameTurn").textContent="승리! 룰렛";
-  return;
- }
-
- fishWordGame.playerTurn=false;
- document.getElementById("wordGameTurn").textContent="🤖 AI 생각 중...";
-
- const cfg=fishWordDifficultyConfig[fishWordDifficulty];
-
- setTimeout(()=>{
-  if(!fishWordGame.active)return;
-
-  const ai=chooseAIWord(candidates);
-
-  if(!ai){
-   fishWordGame.active=false;
-   document.getElementById("wordGameStatus").innerHTML="<div class=\"big\">🏆</div><p>AI가 더 이상 이어갈 수 없습니다!</p>";
-   document.getElementById("wordGameRoulette").classList.remove("hidden");
-   document.getElementById("wordGameTurn").textContent="승리! 룰렛";
-   return;
-  }
-
-  fishWordGame.used.push(wordKey(ai));
-  fishWordGame.lastWord=ai;
-  fishWordGame.playerTurn=true;
-  addFishWordHistory("🤖 "+cfg.name+" AI",ai);
-  updateFishWordUI();
- },cfg.delay);
-}
-
-function addFishWordHistory(who,word){
- const h=document.getElementById("wordGameHistory");
- if(h) h.innerHTML+="<div>"+who+" → <b>🐟 "+word+"</b></div>";
-}
-
-function updateFishWordUI(){
- const count=document.getElementById("wordGameCount");
- if(count) count.textContent=fishWordGame.used.length;
-
- const turn=document.getElementById("wordGameTurn");
- if(turn) turn.textContent=fishWordGame.active
-  ? (fishWordGame.playerTurn?"플레이어":"🤖 AI")
-  :"종료";
-
- const status=document.getElementById("wordGameStatus");
- if(status && fishWordGame.lastWord){
-  status.innerHTML="<div class=\"big\">🐟 "+fishWordGame.lastWord+"</div><p>다음 단어는 <b>"+wordLast(fishWordGame.lastWord)+"</b>(으)로 시작!</p>";
- }
-}
-
-function spinFishRoulette(){
- if(!currentUser)return;
- const box=document.getElementById("wordRouletteResult");
- const rewards=fishRouletteRewards;
- let n=0;
-
- const timer=setInterval(()=>{
-  box.textContent="💰 "+rewards[Math.floor(Math.random()*rewards.length)].toLocaleString()+" 코인";
-  if(++n>=18){
-   clearInterval(timer);
-   const reward=rewards[Math.floor(Math.random()*rewards.length)];
-   box.textContent="🎉 +"+reward.toLocaleString()+" 코인";
-   currentUser.coins+=reward;
-   currentUser.totalCoinsEarned=(currentUser.totalCoinsEarned||0)+reward;
-   saveGame();
-   renderAll();
-   toast("🏆 끝말잇기 승리! +"+reward.toLocaleString()+" 코인");
-   document.getElementById("wordGameRoulette").classList.add("hidden");
-  }
- },90);
-}
 /* 실행 */
 
 autoLogin();
