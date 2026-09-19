@@ -42,6 +42,61 @@
   color:#cbd5e1; font-size:20px; cursor:pointer;
 }
 </style>
+
+<style id="ui-layout-fix">
+/* ===== 화면 가림 방지 UI 배치 수정 ===== */
+#gamePage > .card:first-child .nav{
+  position:sticky!important;
+  left:auto!important;
+  top:10px!important;
+  bottom:auto!important;
+  width:100%!important;
+  height:auto!important;
+  max-height:220px!important;
+  margin:12px 0 18px!important;
+  padding:12px!important;
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important;
+  flex-direction:initial!important;
+  flex-wrap:initial!important;
+  gap:8px!important;
+  overflow-y:auto!important;
+  background:linear-gradient(180deg,#0c1829,#0a1422)!important;
+  border:1px solid #263c55!important;
+  border-radius:16px!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.22)!important;
+  z-index:20!important;
+}
+#gamePage > .card:first-child .nav::before{
+  grid-column:1/-1!important;
+}
+#gamePage > .page{
+  margin-left:0!important;
+  width:100%!important;
+  max-width:1100px!important;
+}
+#gamePage > .card:first-child{
+  width:100%!important;
+  margin-bottom:10px!important;
+}
+#gamePage{
+  overflow:visible!important;
+}
+@media(max-width:900px){
+  #gamePage > .card:first-child .nav{
+    position:sticky!important;
+    top:5px!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    max-height:300px!important;
+  }
+}
+@media(max-width:560px){
+  #gamePage > .card:first-child .nav{
+    grid-template-columns:1fr!important;
+    max-height:360px!important;
+  }
+}
+</style>
 </head>
 <body>
 <!-- 🌊 10월 바다 대격변 -->
@@ -11633,16 +11688,40 @@ x1
 </div>
 </section>
 
-<!-- 🎲 무료 행운 게임 -->
-
+<!-- 🪙 코인 챌린지 -->
 <section id="coinChallengePage" class="page hidden">
-<div class="card"><h2>🪙 코인 챌린지</h2><p class="small">코인을 걸거나 잃지 않고, 문제를 맞힐 때마다 코인을 획득하는 미니게임입니다.</p>
-<div id="coinChallengeStatus" class="fish-result" style="min-height:110px;text-align:center;"><div class="big">🪙</div><p>시작 버튼을 눌러 코인 챌린지를 시작하세요!</p></div>
-<div class="grid"><div class="stat"><b>현재 라운드</b><br><span id="coinChallengeRound">0 / 5</span></div><div class="stat"><b>획득 코인</b><br><span id="coinChallengeReward">0</span></div></div>
-<div class="card" style="margin-top:12px;text-align:center;"><h3>🎯 숫자 찾기</h3><p id="coinChallengePrompt">시작하면 정답 숫자가 표시됩니다.</p><div id="coinChallengeChoices" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"></div></div>
-<div style="margin-top:12px;text-align:center;"><button id="coinChallengeStartBtn" class="primary" onclick="startCoinChallenge()">🪙 챌린지 시작</button> <button onclick="resetCoinChallenge()">다시 시작</button></div>
-<div class="small" style="margin-top:12px;">※ 베팅·입장료·코인 손실은 없습니다. 5라운드 동안 정답을 맞힐수록 보상이 늘어납니다.</div></div></section>
+<div class="card">
+<h2>🪙 코인 챌린지</h2>
+<p class="small">코인을 걸지 않고, 성공한 라운드에 따라 보너스 코인을 받는 무료 챌린지입니다.</p>
 
+<div class="grid">
+<div class="stat center"><b>현재 라운드</b><br><span id="coinChallengeRound">0 / 5</span></div>
+<div class="stat center"><b>현재 보상</b><br><span id="coinChallengeReward">0</span> 코인</div>
+<div class="stat center"><b>연속 정답</b><br><span id="coinChallengeStreak">0</span>회</div>
+</div>
+
+<div class="card" style="margin-top:14px;text-align:center;">
+<h3>🎯 코인 보너스 도전</h3>
+<p id="coinChallengePrompt">난이도를 선택하고 챌린지를 시작하세요.</p>
+<select id="coinChallengeDifficulty" style="width:100%;max-width:360px;padding:12px;border-radius:10px;background:#101d30;color:#fff;border:1px solid #31506d;">
+<option value="easy">🟢 쉬움 — 1~5</option>
+<option value="normal" selected>🔵 보통 — 1~9</option>
+<option value="hard">🟣 어려움 — 1~20</option>
+</select>
+<div id="coinChallengeChoices" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;"></div>
+</div>
+
+<div id="coinChallengeStatus" class="fish-result" style="min-height:90px;text-align:center;">
+<div class="big">🪙</div><p>시작 버튼을 눌러 도전하세요!</p>
+</div>
+
+<div style="margin-top:12px;text-align:center;">
+<button id="coinChallengeStartBtn" class="primary" onclick="startCoinChallenge()">🪙 챌린지 시작</button>
+<button onclick="resetCoinChallenge()">초기화</button>
+</div>
+<p class="small" style="margin-top:12px;text-align:center;">※ 입장료와 베팅 금액은 없습니다. 실패해도 보유 코인은 차감되지 않습니다. 5라운드 완료 후 보상이 지급됩니다.</p>
+</div>
+</section>
 <section id="chanceGamePage" class="page hidden">
 
 <div class="card">
@@ -16603,31 +16682,63 @@ renderLevelSteal();
 
 /* ==============================
  🪙 코인 챌린지
- ※ 베팅/코인 손실 없이 정답 보상만 지급
+ ※ 베팅/코인 손실 없이 성공 보상만 지급
 ============================== */
-let coinChallenge={active:false,round:0,reward:0,answer:null};
+let coinChallenge={active:false,round:0,reward:0,answer:null,streak:0,max:9,difficulty:"normal",lockedUntil:0};
+const COIN_CHALLENGE_COOLDOWN=10000;
 function resetCoinChallenge(){
- coinChallenge={active:false,round:0,reward:0,answer:null};
- const status=document.getElementById("coinChallengeStatus"),round=document.getElementById("coinChallengeRound"),reward=document.getElementById("coinChallengeReward"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),start=document.getElementById("coinChallengeStartBtn");
- if(status)status.innerHTML='<div class="big">🪙</div><p>시작 버튼을 눌러 코인 챌린지를 시작하세요!</p>';
- if(round)round.textContent="0 / 5"; if(reward)reward.textContent="0"; if(prompt)prompt.textContent="시작하면 정답 숫자가 표시됩니다."; if(choices)choices.innerHTML=""; if(start){start.disabled=false;start.textContent="🪙 챌린지 시작";}
+ coinChallenge={active:false,round:0,reward:0,answer:null,streak:0,max:9,difficulty:"normal",lockedUntil:0};
+ const status=document.getElementById("coinChallengeStatus"),round=document.getElementById("coinChallengeRound"),reward=document.getElementById("coinChallengeReward"),streak=document.getElementById("coinChallengeStreak"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),start=document.getElementById("coinChallengeStartBtn");
+ if(status)status.innerHTML='<div class="big">🪙</div><p>시작 버튼을 눌러 도전하세요!</p>';
+ if(round)round.textContent="0 / 5"; if(reward)reward.textContent="0"; if(streak)streak.textContent="0";
+ if(prompt)prompt.textContent="난이도를 선택하고 챌린지를 시작하세요."; if(choices)choices.innerHTML="";
+ if(start){start.disabled=false;start.textContent="🪙 챌린지 시작";}
 }
 function startCoinChallenge(){
- if(!currentUser)return; coinChallenge={active:true,round:0,reward:0,answer:null};
- const start=document.getElementById("coinChallengeStartBtn"); if(start){start.disabled=true;start.textContent="진행 중...";} renderCoinChallengeRound();
+ if(!currentUser)return;
+ if(Date.now()<coinChallenge.lockedUntil){toast("⏳ 잠시 후 다시 도전할 수 있습니다.");return;}
+ const d=document.getElementById("coinChallengeDifficulty");
+ const difficulty=d?d.value:"normal";
+ const max=difficulty==="easy"?5:difficulty==="hard"?20:9;
+ coinChallenge={active:true,round:0,reward:0,answer:null,streak:0,max,difficulty,lockedUntil:0};
+ const start=document.getElementById("coinChallengeStartBtn"); if(start){start.disabled=true;start.textContent="진행 중...";}
+ renderCoinChallengeRound();
 }
 function renderCoinChallengeRound(){
- if(!coinChallenge.active)return; coinChallenge.round++; coinChallenge.answer=Math.floor(Math.random()*9)+1;
- const round=document.getElementById("coinChallengeRound"),reward=document.getElementById("coinChallengeReward"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),status=document.getElementById("coinChallengeStatus");
- if(round)round.textContent=coinChallenge.round+" / 5"; if(reward)reward.textContent=coinChallenge.reward.toLocaleString(); if(status)status.innerHTML='<div class="big">🎯</div><p>정답 숫자를 찾아보세요!</p>'; if(prompt)prompt.innerHTML='정답은 <b style="font-size:28px;">'+coinChallenge.answer+'</b> 입니다. 아래에서 선택하세요.';
- if(choices){choices.innerHTML="";const nums=[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);nums.forEach(n=>{const b=document.createElement("button");b.textContent="🔢 "+n;b.onclick=()=>answerCoinChallenge(n);choices.appendChild(b);});}
+ if(!coinChallenge.active)return;
+ coinChallenge.round++;
+ coinChallenge.answer=Math.floor(Math.random()*coinChallenge.max)+1;
+ const round=document.getElementById("coinChallengeRound"),reward=document.getElementById("coinChallengeReward"),streak=document.getElementById("coinChallengeStreak"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),status=document.getElementById("coinChallengeStatus");
+ if(round)round.textContent=coinChallenge.round+" / 5"; if(reward)reward.textContent=coinChallenge.reward.toLocaleString(); if(streak)streak.textContent=coinChallenge.streak;
+ if(status)status.innerHTML='<div class="big">🎯</div><p>정답 숫자를 선택하세요!</p>';
+ if(prompt)prompt.innerHTML='정답은 <b style="font-size:28px;">'+coinChallenge.answer+'</b> 입니다.';
+ if(choices){choices.innerHTML="";const nums=Array.from({length:coinChallenge.max},(_,i)=>i+1).sort(()=>Math.random()-0.5);nums.forEach(n=>{const b=document.createElement("button");b.textContent="🔢 "+n;b.onclick=()=>answerCoinChallenge(n);choices.appendChild(b);});}
 }
 function answerCoinChallenge(n){
  if(!currentUser||!coinChallenge.active)return;
- if(n===coinChallenge.answer){const gain=coinChallenge.round*2000;coinChallenge.reward+=gain;toast("✅ 정답! +"+gain.toLocaleString()+" 코인");}else toast("❌ 오답! 코인을 잃지는 않습니다.");
- if(coinChallenge.round>=5){coinChallenge.active=false;currentUser.coins+=coinChallenge.reward;currentUser.totalCoinsEarned=(currentUser.totalCoinsEarned||0)+coinChallenge.reward;saveGame();renderAll();
-  const status=document.getElementById("coinChallengeStatus"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),start=document.getElementById("coinChallengeStartBtn");
-  if(status)status.innerHTML='<div class="big">🏆</div><p>챌린지 완료!</p>'; if(prompt)prompt.innerHTML='<b>총 '+coinChallenge.reward.toLocaleString()+' 코인</b>을 획득했습니다!'; if(choices)choices.innerHTML=""; if(start){start.disabled=false;start.textContent="🪙 다시 도전";} return;}
+ if(n===coinChallenge.answer){
+   coinChallenge.streak++;
+   const base=coinChallenge.difficulty==="easy"?1500:coinChallenge.difficulty==="hard"?4000:2500;
+   const gain=base*coinChallenge.round + Math.max(0,coinChallenge.streak-1)*1000;
+   coinChallenge.reward+=gain;
+   toast("✅ 정답! +"+gain.toLocaleString()+" 코인");
+ }else{
+   coinChallenge.streak=0;
+   toast("❌ 오답! 코인은 차감되지 않습니다.");
+ }
+ if(coinChallenge.round>=5){
+   coinChallenge.active=false;
+   currentUser.coins+=coinChallenge.reward;
+   currentUser.totalCoinsEarned=(currentUser.totalCoinsEarned||0)+coinChallenge.reward;
+   saveGame();renderAll();
+   coinChallenge.lockedUntil=Date.now()+COIN_CHALLENGE_COOLDOWN;
+   const status=document.getElementById("coinChallengeStatus"),prompt=document.getElementById("coinChallengePrompt"),choices=document.getElementById("coinChallengeChoices"),start=document.getElementById("coinChallengeStartBtn");
+   if(status)status.innerHTML='<div class="big">🏆</div><p>챌린지 완료!</p>';
+   if(prompt)prompt.innerHTML='<b>총 '+coinChallenge.reward.toLocaleString()+' 코인</b>을 획득했습니다!';
+   if(choices)choices.innerHTML="";
+   if(start){start.disabled=true;start.textContent="⏳ 10초 후 다시 도전";setTimeout(()=>{if(!coinChallenge.active&&start){start.disabled=false;start.textContent="🪙 다시 도전";}},COIN_CHALLENGE_COOLDOWN);}
+   return;
+ }
  renderCoinChallengeRound();
 }
 resetCoinChallenge();
