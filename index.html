@@ -1,46 +1,49 @@
 <!DOCTYPE html>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<html lang="ko"><head>
+<html lang="ko">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>🎣 낚시왕</title>
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>🎣 낚시게임 사이트</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-/* 기존 CSS */
+.forgot-account{display:block !important; visibility:visible !important; opacity:1 !important; text-align:center; margin:10px 0; color:#8b9bb4; font-size:14px;}
+
+.forgot-account-btn{
+  width:100%;
+  margin-top:8px;
+  background:transparent;
+  border:1px solid #64748b;
+  color:#cbd5e1;
+  font-size:13px;
+}
+.forgot-account-btn:hover{background:rgba(100,116,139,.15);}
+.recovery-modal{
+  position:fixed; inset:0; z-index:99999;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; background:rgba(2,6,23,.78);
+}
+.recovery-modal.hidden{display:none!important;}
+.recovery-card{
+  position:relative; width:min(480px,100%); max-height:90vh; overflow:auto;
+  background:#0f172a; border:1px solid #334155; border-radius:18px;
+  padding:24px; box-shadow:0 25px 80px rgba(0,0,0,.55); color:#e5e7eb;
+}
+.recovery-card h2{margin:0 0 8px;}
+.recovery-section{
+  margin-top:18px; padding:16px; border:1px solid #334155;
+  border-radius:14px; background:rgba(15,23,42,.75);
+}
+.recovery-section h3{margin:0 0 10px; font-size:16px;}
+.recovery-section input{width:100%; box-sizing:border-box; margin:6px 0;}
+.recovery-section button{width:100%; margin-top:7px;}
+.recovery-result{min-height:22px; margin-top:10px; font-weight:700; word-break:break-word;}
+.recovery-close{
+  position:absolute; top:12px; right:12px; border:0; background:transparent;
+  color:#cbd5e1; font-size:20px; cursor:pointer;
+}
 </style>
 </head>
-
-<head>
-    ...
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-
 <body>
-    ...
-    
-<script>
-    // ⭐ 여기에 넣기
-    const SUPABASE_URL = "https://cmtukjywweternybcbyg.supabase.co"
-    const Publishable = "sb_publishable_kFxW5ZyrphPOWHa9ZJzZmg_kcgwX-vg";
-
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-
-    // 기존 낚시게임 JavaScript
-</script>
-
-
 <!-- 🌊 10월 바다 대격변 -->
 <section id="octoberCataclysmPage" class="page hidden">
 <div class="card"><h2>🌊 10월 바다 대격변 🌊</h2>
@@ -321,7 +324,46 @@ line-height:1.45;"></textarea>
 
 <button class="primary" style="width:100%" onclick="login()">로그인</button>
 <button style="width:100%" onclick="showSignup()">회원가입</button>
+<button type="button" class="forgot-account-btn" onclick="openAccountRecovery()">🔑 비밀번호/아이디 찾기</button>
+<button type="button" class="secondary" style="width:100%;margin-top:6px" onclick="showRecovery()">🔑 아이디/비밀번호 복구</button>
 </div>
+</div>
+
+<!-- 아이디/비밀번호 복구 -->
+<div id="recoveryPage" class="container auth hidden">
+<div class="card">
+<h2>🔑 계정 복구</h2>
+<p class="small">가입할 때 입력한 아이디와 닉네임을 입력하세요.</p>
+<input id="recoveryId" placeholder="아이디 (모르면 비워두세요)">
+<input id="recoveryNick" placeholder="가입한 닉네임">
+<button class="primary" style="width:100%" onclick="recoverAccount()">복구하기</button>
+<div id="recoveryResult" class="small" style="margin-top:12px;white-space:pre-wrap"></div>
+<button type="button" style="width:100%;margin-top:8px" onclick="showLogin()">로그인으로 돌아가기</button>
+</div>
+</div>
+
+<!-- 계정 복구 -->
+<div id="accountRecoveryModal" class="recovery-modal hidden">
+  <div class="recovery-card">
+    <button type="button" class="recovery-close" onclick="closeAccountRecovery()">✕</button>
+    <h2>🔑 계정 복구</h2>
+    <p class="small">가입할 때 사용한 정보를 입력하면 아이디 또는 비밀번호를 확인할 수 있습니다.</p>
+
+    <div class="recovery-section">
+      <h3>👤 아이디 찾기</h3>
+      <input id="recoveryNick" placeholder="가입한 닉네임">
+      <button type="button" class="primary" onclick="findAccountId()">아이디 찾기</button>
+      <div id="recoveryIdResult" class="recovery-result"></div>
+    </div>
+
+    <div class="recovery-section">
+      <h3>🔐 비밀번호 찾기</h3>
+      <input id="recoveryId" placeholder="아이디">
+      <input id="recoveryPwNick" placeholder="가입한 닉네임">
+      <button type="button" class="success" onclick="findAccountPassword()">비밀번호 찾기</button>
+      <div id="recoveryPwResult" class="recovery-result"></div>
+    </div>
+  </div>
 </div>
 
 <!-- 회원가입 -->
@@ -334,7 +376,6 @@ line-height:1.45;"></textarea>
 <input id="signupPw" type="password" placeholder="비밀번호">
 
 <button class="success" style="width:100%" onclick="signup()">회원가입</button>
-<div class="forgot-account">비밀번호/아이디를 잊어버리셨습니까?</div>
 <button style="width:100%" onclick="showLogin()">돌아가기</button>
 </div>
 </div>
@@ -12567,9 +12608,80 @@ let currentUser=null;
 let currentAccountId=null;
 
 
+
+/* ==============================
+계정 복구
+============================== */
+function openAccountRecovery(){
+  const modal=document.getElementById("accountRecoveryModal");
+  if(modal) modal.classList.remove("hidden");
+  const idResult=document.getElementById("recoveryIdResult");
+  const pwResult=document.getElementById("recoveryPwResult");
+  if(idResult) idResult.textContent="";
+  if(pwResult) pwResult.textContent="";
+}
+
+function closeAccountRecovery(){
+  const modal=document.getElementById("accountRecoveryModal");
+  if(modal) modal.classList.add("hidden");
+}
+
+function findAccountId(){
+  const nick=document.getElementById("recoveryNick").value.trim();
+  const result=document.getElementById("recoveryIdResult");
+  if(!nick){ result.textContent="닉네임을 입력해주세요."; return; }
+
+  const accounts=getAccounts();
+  const matches=Object.keys(accounts).filter(id=>accounts[id] && accounts[id].nickname===nick);
+  if(!matches.length){
+    result.textContent="해당 닉네임으로 가입된 아이디를 찾을 수 없습니다.";
+    return;
+  }
+  result.textContent="찾은 아이디: "+matches.join(", ");
+}
+
+function findAccountPassword(){
+  const id=document.getElementById("recoveryId").value.trim();
+  const nick=document.getElementById("recoveryPwNick").value.trim();
+  const result=document.getElementById("recoveryPwResult");
+  if(!id||!nick){ result.textContent="아이디와 닉네임을 모두 입력해주세요."; return; }
+
+  const accounts=getAccounts();
+  const account=accounts[id];
+  if(!account || account.nickname!==nick){
+    result.textContent="아이디 또는 닉네임이 일치하지 않습니다.";
+    return;
+  }
+  result.textContent="찾은 비밀번호: "+String(account.password||"");
+}
+
 /* ==============================
 로그인 / 회원가입
 ============================== */
+
+function showRecovery(){
+ document.getElementById("authPage").classList.add("hidden");
+ document.getElementById("signupPage").classList.add("hidden");
+ document.getElementById("recoveryPage").classList.remove("hidden");
+ document.getElementById("recoveryResult").textContent="";
+}
+
+function recoverAccount(){
+ const id=document.getElementById("recoveryId").value.trim();
+ const nick=document.getElementById("recoveryNick").value.trim();
+ const result=document.getElementById("recoveryResult");
+ if(!nick){ result.textContent="닉네임을 입력해주세요."; return; }
+ const accounts=getAccounts();
+ const matches=Object.keys(accounts).filter(key=>{
+   const account=accounts[key];
+   return account && account.nickname===nick && (!id || key===id);
+ });
+ if(matches.length===0){
+   result.textContent="일치하는 계정을 찾지 못했습니다. 아이디와 닉네임을 확인해주세요.";
+   return;
+ }
+ result.textContent=matches.map(key=>"아이디: "+key+"\n비밀번호: "+accounts[key].password).join("\n\n");
+}
 
 function showSignup(){
 
@@ -16644,4 +16756,8 @@ viewer.style.display="none";
 
 
 
+
+<style>
+.forgot-account{margin:9px 0;text-align:center;color:#9eb0c9;font-size:13px;line-height:1.5;}
+</style>
 </body></html>
