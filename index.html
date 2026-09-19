@@ -534,40 +534,6 @@ z-index:9999
 
 <body>
 
-<!-- 📋 전체 코드 복사 패널 -->
-<div id="sourceCopyPanel" style="
-position:fixed;right:18px;bottom:18px;z-index:99999;
-background:#111827;color:#fff;padding:12px;border-radius:14px;
-box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:Arial,sans-serif;">
-<button id="copyAllSourceBtn" type="button" onclick="copyAllSource()" style="
-border:0;border-radius:10px;padding:11px 15px;cursor:pointer;
-background:#2563eb;color:#fff;font-weight:700;font-size:14px;">
-📋 전체 코드 복사
-</button>
-<button type="button" onclick="toggleSourceViewer()" style="
-margin-left:6px;border:0;border-radius:10px;padding:11px 15px;cursor:pointer;
-background:#374151;color:#fff;font-weight:700;font-size:14px;">
-👀 코드 보기
-</button>
-</div>
-
-<div id="sourceViewer" style="
-display:none;position:fixed;inset:5%;z-index:99998;background:#0b1220;
-border:1px solid #374151;border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.6);">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:#fff;">
-<b>📄 현재 HTML 전체 코드</b>
-<button type="button" onclick="toggleSourceViewer()" style="
-border:0;border-radius:8px;padding:8px 12px;cursor:pointer;
-background:#ef4444;color:#fff;font-weight:700;">닫기</button>
-</div>
-<textarea id="sourceCodeBox" readonly="" style="
-width:100%;height:calc(100% - 55px);resize:none;
-background:#020617;color:#e5e7eb;border:1px solid #334155;
-border-radius:10px;padding:12px;font-family:Consolas,monospace;font-size:12px;
-line-height:1.45;"></textarea>
-</div>
-
-
 <div id="toast"></div>
 
 <!-- 로그인 -->
@@ -16817,63 +16783,7 @@ autoLogin();
 
 
 
-<script>
-function getFullHTMLSource(){
-return "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-}
 
-function copyAllSource(){
-const source=getFullHTMLSource();
-const btn=document.getElementById("copyAllSourceBtn");
-
-function success(){
-if(btn){
-const old=btn.textContent;
-btn.textContent="✅ 전체 코드 복사 완료!";
-setTimeout(()=>btn.textContent=old,1800);
-}
-}
-
-if(navigator.clipboard && window.isSecureContext){
-navigator.clipboard.writeText(source).then(success).catch(()=>{
-fallbackCopySource(source,success);
-});
-}else{
-fallbackCopySource(source,success);
-}
-}
-
-function fallbackCopySource(source,done){
-const box=document.createElement("textarea");
-box.value=source;
-box.style.position="fixed";
-box.style.left="-9999px";
-document.body.appendChild(box);
-box.focus();
-box.select();
-
-try{
-document.execCommand("copy");
-done();
-}catch(e){
-alert("자동 복사에 실패했습니다. 코드 보기에서 전체 코드를 직접 복사해주세요.");
-}
-
-box.remove();
-}
-
-function toggleSourceViewer(){
-const viewer=document.getElementById("sourceViewer");
-const box=document.getElementById("sourceCodeBox");
-
-if(viewer.style.display==="none"){
-box.value=getFullHTMLSource();
-viewer.style.display="block";
-}else{
-viewer.style.display="none";
-}
-}
-</script>
 
 
 
