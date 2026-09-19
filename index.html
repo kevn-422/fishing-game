@@ -97,6 +97,72 @@
   }
 }
 </style>
+
+<style id="bottom-menu-layout">
+/* ===== 하단 메뉴 ===== */
+#gamePage > .card:first-child .nav{
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  top:auto!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  max-height:170px!important;
+  margin:0!important;
+  padding:10px 12px!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:7px!important;
+  overflow-y:auto!important;
+  background:rgba(8,17,31,.97)!important;
+  border:1px solid #29445e!important;
+  border-bottom:0!important;
+  border-radius:18px 18px 0 0!important;
+  box-shadow:0 -8px 28px rgba(0,0,0,.35)!important;
+  z-index:99999!important;
+  backdrop-filter:blur(10px);
+}
+#gamePage > .card:first-child .nav::before{
+  content:'🎣 낚시왕 메뉴';
+  display:block!important;
+  width:100%!important;
+  text-align:center!important;
+  color:#67d8ff!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  padding:0 0 4px!important;
+}
+#gamePage > .card:first-child .nav button{
+  width:auto!important;
+  min-width:105px!important;
+  min-height:40px!important;
+  margin:0!important;
+  padding:8px 11px!important;
+  text-align:center!important;
+  flex:0 1 auto!important;
+}
+#gamePage > .page{
+  margin-left:0!important;
+  width:100%!important;
+  padding-bottom:190px!important;
+}
+#gamePage{padding-bottom:180px!important;overflow:visible!important}
+@media(max-width:700px){
+  #gamePage > .card:first-child .nav{max-height:145px!important;padding:8px!important;gap:5px!important}
+  #gamePage > .card:first-child .nav button{min-width:90px!important;min-height:36px!important;padding:7px 8px!important;font-size:12px!important}
+  #gamePage > .page{padding-bottom:160px!important}
+  #gamePage{padding-bottom:150px!important}
+}
+@media(max-width:450px){
+  #gamePage > .card:first-child .nav{max-height:125px!important}
+  #gamePage > .card:first-child .nav button{min-width:78px!important;font-size:11px!important}
+  #gamePage > .page{padding-bottom:140px!important}
+}
+</style>
 </head>
 <body>
 <!-- 🌊 10월 바다 대격변 -->
